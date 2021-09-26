@@ -31,9 +31,9 @@ class Dashboard extends Component{
         // user1.__setitem__("Content-type", "application/json")
         // user1.__setitem__("Access-Control-Allow-Origin", "*")
 
-        // const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}}, {headers:{"Access-Control-Allow-Origin": "*", mode: "cors"}},{withCredentials:true} ).then(console.log("done"));
+        // const user1= await axios.get('http://127.0.0.1:8000/api/user/info/', {headers:{"Access-Control-Allow-Origin": "*", mode: "cors"}},{withCredentials:true} ).then(console.log("done"));
 
-        console.log(user1);
+        console.log(user1.data);
 
         
     }
