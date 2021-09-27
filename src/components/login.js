@@ -9,19 +9,28 @@ class Login extends Component{
     constructor(props)
     {
         super(props);
-        this.state = { data :[],
+        this.state = { 
+        done :"False",
         isAdmin : "False",
         isEnabled:"True",
         error:false};
     }
 
+    renderRedirect= () =>{
+        if(this.state.done==="True")
+        {
+            return <Redirect to={{pathname:'../dashboard'}}/>
+        }
+    }
+
     render(){
         return(
+
             <div>
+            {this.renderRedirect()}
             Hello Login
             </div>
             // window.location.href = "http://localhost:8000/api/login/login"
-            
         );
     }
 
@@ -33,7 +42,7 @@ class Login extends Component{
 
         // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
 
-        const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}}, {headers:{"Access-Control-Allow-Origin": "*", mode: "cors"}},{withCredentials:true} ).then(console.log("done"));
+        const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true} ).then(console.log("done"));
 
         // const getData = () => {
         //     Axios.get("http://localhost:3000/security?select=symbol,company",
@@ -46,6 +55,8 @@ class Login extends Component{
         //     })
         // }
         console.log(user1)
+        await this.setState({done:"True"});                
+
 
         // console.log(user1["isAdmin"]);
 
