@@ -7,6 +7,7 @@ import HomePage from './components/homepage';
 import Sample from './components/sample';
 import DashBoard from './components/dashboard'
 import SideBar from './components/sidebar';
+import Logout from './components/logout';
 
 class App extends Component{
 
@@ -17,6 +18,7 @@ class App extends Component{
           <Route path="/dashboard" component={DashBoard}/>
           <Route path="/login" component={Login}/>
           <Route path="/sidebar" component={SideBar}/>
+          <Route path="/logout" component={Logout}/>
           {/* <Route path="/sample" component={Sample}/> */}
           <Route path="/" component={HomePage}/>
           
