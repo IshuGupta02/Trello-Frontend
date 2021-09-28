@@ -11,14 +11,15 @@ class Failed extends Component{
     {
         super(props);
         this.state = { 
-        error :"False",
+        error :false,
+        loggedIn_failed: false,
         };
     }
 
     renderRedirect= () =>{
 
         console.log(this.state.error);
-        if(this.state.error==="True")
+        if(this.state.error===true)
         {
             alert("You cannot access this page!")
             return <Redirect to={{pathname:'../logout'}}/>
@@ -36,15 +37,24 @@ class Failed extends Component{
 
     async componentDidMount(){
 
-        const response= await axios({url:'http://127.0.0.1:8000/api/user/info/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
+        const response= await axios({url:'http://127.0.0.1:8000/api/check/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
 
-        console.log(response.status)
+        if(response.status==202){
 
-        if(response.status!=202){
-            // console.log("changing state")
-            this.setState({error:"True"});
-            // console.log(this.state.error);
+            if(response.data['loggedin']!==true){
+                await this.setState({loggedIn_failed : true});
+                await this.setState({error:true});
+            }
+            else{
+                const response= await axios({url:'http://127.0.0.1:8000/api/user/info/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
+                if(response.data.enabled==false){
+                    await this.setState({error:true});
+                }                
+                    
+            }
+
         }
+           
     }
 }
 
