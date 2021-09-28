@@ -9,12 +9,12 @@ class HomePage extends Component{
     {
         super(props);
         this.state = { 
-            loggedIn :"False",
+            loggedIn :false,
         };
     }
 
     renderRedirect= () =>{
-        if(this.state.loggedIn==="True")
+        if(this.state.loggedIn===true)
         {
             return <Redirect to={{pathname:'../dashboard'}}/>
         }
@@ -32,22 +32,22 @@ class HomePage extends Component{
     }
 
     async componentDidMount(){
+        
+        const response= await axios({url:'http://127.0.0.1:8000/api/check/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
 
-        try{
-            const response= await axios({url:'http://127.0.0.1:8000/api/user/info/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
+        // console.log(response)
 
-            console.log(response.status)
-    
-            if(response.status==202){
-                // console.log("changing state")
-                this.setState({loggedIn:"True"});
-                // console.log(this.state.error);
+        if(response.status==202){
+
+            // console.log(response.data)
+            // console.log(response.data['loggedin'])
+            
+            if(response.data['loggedin']==true){
+                this.setState({loggedIn : true});
             }
+            
         }
-        catch(e){
-
-        }
-
+       
     }
 }
 

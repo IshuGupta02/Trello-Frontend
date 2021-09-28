@@ -11,6 +11,7 @@ class Logout extends Component{
         super(props);
         this.state = { 
         done :"False",
+        loggedIn:false
         };
     }
 
@@ -25,18 +26,35 @@ class Logout extends Component{
         return(
             <div>
             {this.renderRedirect()}
-            Logout
+            Logout in process
             </div>
         );
     }
 
     async componentDidMount(){
 
-        const user1= await axios({url:'http://127.0.0.1:8000/api/login/logout/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
+        const response= await axios({url:'http://127.0.0.1:8000/api/check/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
 
-        console.log(user1)
-        await this.setState({done:"True"});
+        if(response.status==202){
 
+            if(response.data['loggedin']==true){
+                await this.setState({loggedIn : true});
+            }
+           
+        }
+
+        if(this.state.loggedIn==true){
+            const user1= await axios({url:'http://127.0.0.1:8000/api/login/logout/' ,method:'GET',withCredentials:true} ).then(console.log("done"));
+
+            console.log(user1);
+            await this.setState({done:"True"});
+
+        }
+        else{
+            console.log("you are not logged in");
+            await this.setState({done:"True"});
+
+        }
     }
         
 }

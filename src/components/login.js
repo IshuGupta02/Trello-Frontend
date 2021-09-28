@@ -13,13 +13,19 @@ class Login extends Component{
         done :"False",
         isAdmin : "False",
         isEnabled:"True",
-        error:false};
+        loggedIn:"False",
+        error:false,
+        failed:"False"
+        };
     }
 
     renderRedirect= () =>{
-        if(this.state.done==="True")
+        if(this.state.done==="True" || this.state.loggedIn==="True" )
         {
             return <Redirect to={{pathname:'../dashboard'}}/>
+        }
+        else if(this.state.failed==="True"){
+            return <Redirect to={{pathname:'../'}}/>
         }
     }
 
@@ -34,19 +40,21 @@ class Login extends Component{
     }
 
     async componentDidMount(){
-        // eslint-disable-next-line no-restricted-globals
-        const params= new URLSearchParams(location.search);
-        const auth= params.get("code");
-        console.log(auth);
+       
+            // eslint-disable-next-line no-restricted-globals
+            const params= new URLSearchParams(location.search);
+            const auth= params.get("code");
+            console.log(auth);
 
-        // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
+            // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
 
-        // const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true}).then(console.log("done"));
+            // const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true}).then(console.log("done"));
 
-        const user1= await axios({url:'http://127.0.0.1:8000/api/login/OAuth/' ,method:'GET', params: {code:auth} , withCredentials:true} ).then(console.log("done"));
+            const user1= await axios({url:'http://127.0.0.1:8000/api/login/OAuth/' ,method:'GET', params: {code:auth} , withCredentials:true} ).then(console.log("done"));
 
-        console.log(user1)
-        await this.setState({done:"True"});
+            console.log(user1)
+            await this.setState({done:"True"});
+
 
     }
         
