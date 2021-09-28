@@ -14,10 +14,6 @@ class SideBar extends Component{
         };
     }
 
-    ProjectSelected=(id)=>{
-        
-    }
-
     render(){
         return(
             <div>
@@ -34,7 +30,7 @@ class SideBar extends Component{
                     this.state.projectlist_dict.map(function(proj){
                         return (
                             <button key={proj.id} onClick={() => 
-                             window.location.href='../dashboard'}> {proj.name}</button>
+                             window.location.href='../project?'+proj.id}> {proj.name}</button>
                         );
                     })
                     }   
@@ -49,9 +45,9 @@ class SideBar extends Component{
         );
     }
 
-    async componentDidMount(){    
+    async componentDidMount(){
 
-        const projects= await axios.get('http://127.0.0.1:8000/api/project/',{withCredentials:true} ).then(console.log("done"));
+        const projects= await axios({url:'http://127.0.0.1:8000/api/project/' ,method:'GET', withCredentials:true} ).then(console.log("done"));
 
         
         await this.setState({projectlist:projects.data});
