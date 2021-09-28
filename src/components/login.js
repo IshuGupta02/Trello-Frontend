@@ -30,7 +30,6 @@ class Login extends Component{
             {this.renderRedirect()}
             Hello Login
             </div>
-            // window.location.href = "http://localhost:8000/api/login/login"
         );
     }
 
@@ -42,23 +41,12 @@ class Login extends Component{
 
         // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
 
-        const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true} ).then(console.log("done"));
+        // const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true}).then(console.log("done"));
 
-        // const getData = () => {
-        //     Axios.get("http://localhost:3000/security?select=symbol,company",
-        //     {headers: {Authorization: 'Bearer 73Ntx3b6SwNXC7ANV3tw4wFfDdKntB26',
-        //                 "Access-Control-Allow-Origin": "*",
-        //                 mode: "cors",               
-        //     }}
-        //     ).then((response) => {
-        //         console.log(response)
-        //     })
-        // }
+        const user1= await axios({url:'http://127.0.0.1:8000/api/login/OAuth/' ,method:'GET', params: {code:auth} , withCredentials:true} ).then(console.log("done"));
+
         console.log(user1)
-        await this.setState({done:"True"});                
-
-
-        // console.log(user1["isAdmin"]);
+        await this.setState({done:"True"});
 
     }
         
