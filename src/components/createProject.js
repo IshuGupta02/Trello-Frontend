@@ -28,24 +28,24 @@ class CreateProject extends Component{
         if(this.state.failed===true)
         {
             // alert("Could not create the project!")
-            // return <Redirect to={{pathname:'../dashboard'}}/>
+            return <Redirect to={{pathname:'../dashboard'}}/>
         }
 
         if(this.state.redirect===true)
         {
             // alert("Could not create the project!")
-            // return <Redirect to={{pathname:'../project?'}}/>
+            return <Redirect to={{pathname:'../project?'}}/>
         }
     }
 
     async handleSubmit(event){
-        event.preventDefault();
+        // event.preventDefault();
 
-        let formData = { project_name: this.state.project_name, wiki: this.state.wiki , project_members:this.state.project_members }
+        // let formData = { project_name: this.state.project_name, wiki: this.state.wiki , project_members:this.state.project_members }
 
-        const response= await axios({url:'http://127.0.0.1:8000/project/' ,method:'POST', data:formData , withCredentials:true} ).then(response=>{this.setState({redirect:true})}).catch(error=>{this.setState({failed:true})})
+        // const response= await axios({url:'http://127.0.0.1:8000/project/' ,method:'POST', data:formData , withCredentials:true} ).then(response=>{this.setState({redirect:true})}).catch(error=>{this.setState({failed:true})})
 
-        console.log(response);
+        // console.log(response);
 
     }
 
@@ -64,7 +64,32 @@ class CreateProject extends Component{
     }
 
     async componentDidMount(){
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/user/' ,method:'GET', withCredentials:true} ).then(console.log("done"));
+
+        // console.log(users.data);
+
+        let user_list=[];
         
+        const users=response.data;
+
+        // console.log(users);
+        
+        for(let u in users){
+            // console.log(u);
+            let dict = {};
+            dict["user_id"] = users[u]["id"];
+            dict["name"] = users[u]["User_name"];
+            user_list.push(dict);
+        }
+
+        // console.log(arr);
+        
+        await this.setState({
+            userlist:user_list
+        })
+
+        // console.log(this.state.userlist);
            
     }
 }
