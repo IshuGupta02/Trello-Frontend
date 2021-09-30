@@ -1,13 +1,35 @@
-import React, {Component} from 'react';
+import * as React from 'react'
 import { render } from '@testing-library/react';
 import { Redirect } from 'react-router-dom';
 // import { Component } from 'react/cjs/react.production.min';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
-import 'semantic-ui-css/semantic.min.css'
+// import { Select } from 'semantic-ui-react';
+// import 'semantic-ui-css/semantic.min.css'
+import {Button, Dropdown, Form , Header} from 'semantic-ui-react';
+import Select from 'react-select'
+import  MultiSelectReact  from 'multi-select-react';
 
-class CreateProject extends Component{
+// {
+//not req//     "id": 2,
+//done//     "Project_name": "vhjvkhhk",
+//     "wiki": "tfckjv",
+//     "date_created": "2021-09-07",
+//     "due_date": "2021-09-08",
+//done//     "members": [],  
+//done//     "admins": [],
+//not req//     "listsassociated": []
+// }
+
+
+
+//remember
+
+//1. ensure that people chosen as admins are also members
+
+
+class CreateProject extends React.Component{
     constructor(props)
     {
         super(props);
@@ -18,6 +40,7 @@ class CreateProject extends Component{
             failed: false,
             userlist : [],
             project_members:[],
+            project_admins:[],
 
         };
     }
@@ -49,19 +72,7 @@ class CreateProject extends Component{
 
     }
 
-    render(){
-        return(
-            <div>
-
-                <form onSubmit={event => this.handleSubmit(event)}>
-                    <h2>
-                        Add new Project
-                    </h2>
-                    <input id="project_name" placeholder='Project Name'></input>
-                </form>
-            </div>
-        );
-    }
+    
 
     async componentDidMount(){
 
@@ -78,8 +89,10 @@ class CreateProject extends Component{
         for(let u in users){
             // console.log(u);
             let dict = {};
-            dict["user_id"] = users[u]["id"];
-            dict["name"] = users[u]["User_name"];
+            dict["key"] = users[u]["id"];
+            dict["value"] = users[u]["id"];
+            dict["label"] = users[u]["User_name"];
+
             user_list.push(dict);
         }
 
@@ -92,6 +105,72 @@ class CreateProject extends Component{
         // console.log(this.state.userlist);
            
     }
+
+    render(){
+        return(
+            <div>
+
+                <form onSubmit={event => this.handleSubmit(event)}>
+                    <h2>
+                        Add new Project
+                    </h2>
+                    <input type="text" value={this.state.project_name} onChange={event => this.handleNameChange(event)} />
+
+                    <br/>
+
+                    <label>Project Members</label>
+
+                    <Dropdown
+                        placeholder='Members'
+                        options={this.state.userlist}
+                        fluid multiple selection
+                        onChange={(event,data) =>this.handleProjectMemberChange(event , data)
+                        }
+                        
+                    />
+
+                    <label>Project Admins</label>
+
+                    <Dropdown
+                        placeholder='Project Admins'
+                        options={this.state.userlist}
+                        fluid multiple selection
+                        onChange={(event,data) =>this.handleProjectAdminChange(event , data)
+                        }
+                        
+                    />
+                    
+    
+                </form>
+            </div>
+        );
+    }
+
+    async handleNameChange(event){
+        await this.setState({
+            project_name: event.target.value
+        });
+
+    }
+
+    async handleProjectMemberChange(event, data){
+
+        await this.setState({
+            project_members: data.value
+        });
+
+    }
+
+    async handleProjectAdminChange(event, data){
+
+        await this.setState({
+            project_admins: data.value
+        });
+
+    }
+
+
+
 }
 
 export default CreateProject;
