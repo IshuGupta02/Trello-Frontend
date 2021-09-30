@@ -10,7 +10,7 @@ class Failed extends Component{
     constructor(props)
     {
         super(props);
-        this.state = { 
+        this.state = {
         error :false,
         loggedIn_failed: false,
         };
@@ -18,12 +18,18 @@ class Failed extends Component{
 
     renderRedirect= () =>{
 
-        console.log(this.state.error);
-        if(this.state.error===true)
+        // console.log(this.state.error);
+        if(this.state.loggedIn_failed===true)
+        {
+            alert("You cannot access this page!")
+            return <Redirect to={{pathname:'../'}}/>
+        }
+        else if(this.state.error===true)
         {
             alert("You cannot access this page!")
             return <Redirect to={{pathname:'../logout'}}/>
         }
+        
     }
 
     render(){

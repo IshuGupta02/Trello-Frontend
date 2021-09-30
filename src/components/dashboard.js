@@ -6,14 +6,13 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 class Dashboard extends Component{
-    // constructor(props)
-    // {
-    //     super(props);
-    //     this.state = { data :[],
-    //     isAdmin : "False",
-    //     isEnabled:"True",
-    //     error:false};
-    // }
+    constructor(props)
+    {
+        super(props);
+        this.state = { 
+        error:false,
+        };
+    }
 
     render(){
         return(
