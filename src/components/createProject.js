@@ -5,11 +5,16 @@ import { Redirect } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useState } from 'react';
 // import { Select } from 'semantic-ui-react';
 // import 'semantic-ui-css/semantic.min.css'
 import {Button, Dropdown, Form , Header} from 'semantic-ui-react';
+// import {CustomCalendar} from 'semantic-ui-calendar-react'
 import Select from 'react-select'
-import  MultiSelectReact  from 'multi-select-react';
+import DatePicker from "react-datepicker";
+// import Datetime from 'react-datetime';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 // {
 //not req//     "id": 2,
@@ -28,6 +33,10 @@ import  MultiSelectReact  from 'multi-select-react';
 
 //1. ensure that people chosen as admins are also members
 
+//next task
+//1. date field
+//2. wiki field
+
 
 class CreateProject extends React.Component{
     constructor(props)
@@ -41,25 +50,28 @@ class CreateProject extends React.Component{
             userlist : [],
             project_members:[],
             project_admins:[],
+            due_date: "",
+            date_value:"",
 
         };
+        
     }
 
-    renderRedirect= () =>{
+    // renderRedirect= () =>{
 
-        // console.log(this.state.error);
-        if(this.state.failed===true)
-        {
-            // alert("Could not create the project!")
-            return <Redirect to={{pathname:'../dashboard'}}/>
-        }
+    //     // console.log(this.state.error);
+    //     if(this.state.failed===true)
+    //     {
+    //         // alert("Could not create the project!")
+    //         return <Redirect to={{pathname:'../dashboard'}}/>
+    //     }
 
-        if(this.state.redirect===true)
-        {
-            // alert("Could not create the project!")
-            return <Redirect to={{pathname:'../project?'}}/>
-        }
-    }
+    //     if(this.state.redirect===true)
+    //     {
+    //         // alert("Could not create the project!")
+    //         return <Redirect to={{pathname:'../project?'}}/>
+    //     }
+    // }
 
     async handleSubmit(event){
         // event.preventDefault();
@@ -107,10 +119,11 @@ class CreateProject extends React.Component{
     }
 
     render(){
+
         return(
             <div>
 
-                <form onSubmit={event => this.handleSubmit(event)}>
+                <Form onSubmit={event => this.handleSubmit(event)}>
                     <h2>
                         Add new Project
                     </h2>
@@ -139,9 +152,38 @@ class CreateProject extends React.Component{
                         }
                         
                     />
+
+                    <br/>
+                    {/* <Form.Field label='Date' control={CustomCalendar} start='1' end='7' /> */}
                     
+                    <label>Due Date: </label>
+                    {/* <div className="ui calendar" id="dueDate">
+                        <div className="ui input right fluid icon"> 
+                            
+                            <input type="date" placeholder="Date/Time" onChange={(event, data) =>this.handleDueDateChange(event, data)}
+                                // value={this.state.due_date}
+                            />
+                        </div>
+                    </div> */}
+
+                    <DatePicker onChange={(event) => this.handleDueDateChange( event)} selected={this.state.date_value}/>
+
+                    {/* <Datetime
+                    placeholder='Due Date'
+                    name='due_date'
+                    value = {start_date}
+                    width={8}
+                    timeFormat = {true}
+                    onChange={handleSDateChange}
+                    /> */}
+
+                    {/* <DatePicker locale="es" selected={new Date()}  /> */}
+
+                    
+
+
     
-                </form>
+                </Form>
             </div>
         );
     }
@@ -166,6 +208,43 @@ class CreateProject extends React.Component{
         await this.setState({
             project_admins: data.value
         });
+
+    }
+
+    // async handleDueDateChange1(event, data){
+    //     console.log(event);
+    //     console.log(data);
+    //     // console.log(this.state.due_date);
+
+    //     var date= new Date("2021-09-07");
+    //     // console.log(date);
+    //     // console.log(date.toString());
+    //     // console.log(date.getDate());
+    //     // console.log(date.getMonth());
+    //     // console.log(date.getFullYear());
+
+    //     let date1=data.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
+    //     console.log(date1);
+
+
+    // }
+
+    async handleDueDateChange(data){
+        console.log(data);
+        let date1=data.getFullYear()+"-"+data.getMonth()+"-"+data.getDate();
+        console.log(date1);
+
+        // await this.setState({date_value: data});
+        // await this.setState({due_date: due_date});
+
+        await this.setState({
+            date_value: data
+        });
+
+        await this.setState({
+            due_date: date1
+        });
+        
 
     }
 
