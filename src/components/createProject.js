@@ -8,24 +8,17 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 // import { Select } from 'semantic-ui-react';
 // import 'semantic-ui-css/semantic.min.css'
-import {Button, Dropdown, Form , Header} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Header, TextArea} from 'semantic-ui-react';
 // import {CustomCalendar} from 'semantic-ui-calendar-react'
 import Select from 'react-select'
 import DatePicker from "react-datepicker";
 // import Datetime from 'react-datetime';
 import 'react-datepicker/dist/react-datepicker.css';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+// import ReactQuill from 'react-quill';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Cookies from 'js-cookie';
 
-
-// {
-//not req//     "id": 2,
-//done//     "Project_name": "vhjvkhhk",
-//     "wiki": "tfckjv",
-//     "date_created": "2021-09-07",
-//     "due_date": "2021-09-08",
-//done//     "members": [],  
-//done//     "admins": [],
-//not req//     "listsassociated": []
-// }
 
 
 
@@ -33,9 +26,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 //1. ensure that people chosen as admins are also members
 
-//next task
-//1. date field
-//2. wiki field
+// axios.defaults.xsrfCookieName = 'csrftoken'
+// axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
+axios.defaults.xsrfCookieName = 'frontend_csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 
 class CreateProject extends React.Component{
@@ -48,10 +44,12 @@ class CreateProject extends React.Component{
             redirect: false,
             failed: false,
             userlist : [],
+            members_list:[],
             project_members:[],
             project_admins:[],
             due_date: "",
             date_value:"",
+            wiki : "<p>Empty</p>",
 
         };
         
@@ -72,18 +70,6 @@ class CreateProject extends React.Component{
     //         return <Redirect to={{pathname:'../project?'}}/>
     //     }
     // }
-
-    async handleSubmit(event){
-        // event.preventDefault();
-
-        // let formData = { project_name: this.state.project_name, wiki: this.state.wiki , project_members:this.state.project_members }
-
-        // const response= await axios({url:'http://127.0.0.1:8000/project/' ,method:'POST', data:formData , withCredentials:true} ).then(response=>{this.setState({redirect:true})}).catch(error=>{this.setState({failed:true})})
-
-        // console.log(response);
-
-    }
-
     
 
     async componentDidMount(){
@@ -104,6 +90,7 @@ class CreateProject extends React.Component{
             dict["key"] = users[u]["id"];
             dict["value"] = users[u]["id"];
             dict["label"] = users[u]["User_name"];
+            dict["text"] = users[u]["User_name"];
 
             user_list.push(dict);
         }
@@ -146,7 +133,7 @@ class CreateProject extends React.Component{
 
                     <Dropdown
                         placeholder='Project Admins'
-                        options={this.state.userlist}
+                        options={this.state.members_list}
                         fluid multiple selection
                         onChange={(event,data) =>this.handleProjectAdminChange(event , data)
                         }
@@ -179,13 +166,77 @@ class CreateProject extends React.Component{
 
                     {/* <DatePicker locale="es" selected={new Date()}  /> */}
 
-                    
+                    <label> Wiki: </label>
 
+                    <CKEditor 
+                        data={this.state.wiki}
+                        onChange={(event, editor) => this.handleWikiChange( event, editor)}
+                        editor= {ClassicEditor}
+                    />
+
+                    <Button type="submit" >Create Project</Button>
 
     
                 </Form>
+                
             </div>
         );
+    }
+
+    // {
+//not req//     "id": 2,
+//done//     "Project_name": "vhjvkhhk",
+//     "wiki": "tfckjv",
+//     "date_created": "2021-09-07",
+//     "due_date": "2021-09-08",
+//done//     "members": [],  
+//done//     "admins": [],
+//not req//     "listsassociated": []
+// }
+
+
+    async handleSubmit(event){
+        event.preventDefault();
+
+        // console.log(Cookies.get("csrftoken"));
+        
+        let formData = { 
+            Project_name: this.state.project_name,
+            wiki: this.state.wiki ,
+            members:this.state.project_members ,
+            admins: this.state.project_admins,
+            due_date: this.state.due_date      
+        }
+
+        // console.log(formData);
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/project/' ,
+        method:'POST', 
+        data:formData , 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            console.log(err)
+        })
+
+        console.log(response);
+
+        // const config = {
+        //     headers: {
+        //         "Content-Type": 'multipart/form-data',
+        //         'X-CSRFToken': Cookies.get("csrftoken"),
+        //         // 'Cookie': "csrftoken:"+Cookies.get("csrftoken")+"; sessionI"
+        //     }
+        // }
+        // await axios.post("http://127.0.0.1:8000/api/project/",
+        //   formData, config, {withCredentials:true})
+        //   .then(res => {
+        //     console.log(res.data)
+        //   }).catch(err => {
+        //     console.log(err)
+        // })
+
     }
 
     async handleNameChange(event){
@@ -196,10 +247,41 @@ class CreateProject extends React.Component{
     }
 
     async handleProjectMemberChange(event, data){
+        // console.log(data);
+        // console.log(data.value);
+        // console.log(data.options);
+
+        let memberList=[];
+
+        for(let i in data.value){
+            // console.log(data.value[i]);
+            // console.log(this.state.userlist[data.value[i]]);
+
+            let dict = {};
+            dict["key"] = data.value[i];
+            dict["value"] = data.value[i];
+            // dict["label"] = this.state.userlist[3];
+            for(let j in this.state.userlist){
+                // console.log(this.state.userlist[j]["label"]);
+                if(this.state.userlist[j]["key"]===data.value[i]){
+                    dict["label"] = this.state.userlist[j]["label"];
+                    break;
+                }
+
+            }
+
+            memberList.push(dict);
+            // console.log(memberList);
+        }
 
         await this.setState({
             project_members: data.value
         });
+        
+        await this.setState({
+            members_list: memberList
+        });
+        // console.log(this.state.project_members);
 
     }
 
@@ -248,7 +330,19 @@ class CreateProject extends React.Component{
 
     }
 
+    async handleWikiChange(event, editor){
+        // console.log(event);
+        // console.log(editor);
+        // console.log(editor.getData());
 
+        await this.setState({
+            wiki:editor.getData()
+            
+        });
+
+        // console.log(this.state.wiki);
+
+    }
 
 }
 
