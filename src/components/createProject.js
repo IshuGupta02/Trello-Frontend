@@ -29,9 +29,9 @@ import Cookies from 'js-cookie';
 // axios.defaults.xsrfCookieName = 'csrftoken'
 // axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-axios.defaults.xsrfCookieName = 'frontend_csrftoken'
+axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+// axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
 
 class CreateProject extends React.Component{
