@@ -19,9 +19,6 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Cookies from 'js-cookie';
 
-
-
-
 //remember
 
 //1. ensure that people chosen as admins are also members

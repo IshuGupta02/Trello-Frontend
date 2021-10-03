@@ -10,6 +10,7 @@ import SideBar from './components/sidebar';
 import Logout from './components/logout';
 import Failed from './components/failed'
 import CreateProject from './components/createProject'
+import Members from './components/members';
 
 class App extends Component{
 
@@ -23,6 +24,7 @@ class App extends Component{
           <Route path="/logout" component={Logout}/>
           <Route path="/fail" component={Failed}/>
           <Route path="/new" component={CreateProject}/>
+          <Route path="/members" component={Members}/>
           {/* <Route path="/sample" component={Sample}/> */}
           <Route path="/" component={HomePage}/>
           
