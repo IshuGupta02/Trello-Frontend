@@ -77,6 +77,31 @@ class Project extends Component{
                             <button onClick={()=>this.openModal(list.id)}>List: {list.id}, {list.List_name}
                             </button>
 
+                            <button onClick={()=>this.deleteList(list.id)}>Delete
+                            </button>
+
+                            {
+                                list.cardsoflist.map((card)=>{
+                                    return(
+                                        <div key={card.id}>
+                                            {card.Card_name}: 
+                                            {
+                                                card.assigned.map((assign_member)=>{
+                                                    return(
+                                                        <span>
+                                                        {assign_member.User_name}, 
+                                                        </span>
+
+                                                    )                                                    
+                                                })
+
+                                            }
+                                            
+
+                                        </div>
+                                    )
+                                })
+                            }
                             <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
 
                                 <h4>
@@ -90,7 +115,7 @@ class Project extends Component{
                                 <Dropdown
                                     placeholder='assign'
                                     options={this.state.userlist}
-                                    fluid multiple selection
+                                    multiple selection
                                     onChange={(event,data) =>this.handleAssignedMemberChange(event , data, list.id)
                                     }
                                     
@@ -114,27 +139,122 @@ class Project extends Component{
                             >
                             Hello {list.List_name}
 
+                            <button onClick={()=>this.deleteList(list.id)}>Delete
+                            </button>
+
                             {
                                 list.cardsoflist.map((card)=>{
                                     return(
                                         <div key={card.id}>
-                                            <button onClick={()=>this.openModalCard(list.id, card.id)}> {card.id}
+                                        <hr/>
+                                            <button onClick={()=>this.openModalCard(list.id, card.id)}> {card.Card_name}
                                             </button>
+
+                                            <div>
+
+                                            Assigned to:-
+
+                                            {
+                                                card.assigned.map((assign_member)=>{
+                                                    return(
+                                                        <div key={assign_member.id}>
+                                                        {assign_member.User_name},
+                                                        {assign_member.enrollment_no},
+                                                        {assign_member.email}, 
+                                                        </div>
+
+                                                    )                                                    
+                                                })
+
+                                            }
+
+                                            </div>
+                                    
+                                            Description:
+
+                                            {card.description}
+
+                                            <br/>
+
+                                            <button onClick={()=>this.deleteCard(list.id, card.id)}> Delete
+                                            </button>
+
+                                            <button onClick={()=>this.openModalCard(list.id, card.id)}> Update
+                                            </button>
+
 
                                             <Modal onClose={()=>this.closeModalCard(list.id, card.id)} 
                                             open={this.state.open_Modal_Card[list.id][card.id]}
                                             onOpen={()=>this.openModalCard(list.id, card.id)}
                                             >
-                                            Hello {card.Card_name}
+{/* 
+                                            {card.Card_name}
 
-                                            
+                                            <div>
+
+                                            Assigned to:-
+
+                                            {
+                                                card.assigned.map((assign_member)=>{
+                                                    return(
+                                                        <div key={assign_member.id}>
+                                                        {assign_member.User_name},
+                                                        {assign_member.enrollment_no},
+                                                        {assign_member.email}, 
+                                                        </div>
+
+                                                    )                                                    
+                                                })
+
+                                            }
+
+                                            </div>
+                                    
+                                            Description:
+
+                                            {card.description}
+
+                                            <br/> */}
+
 
                                             </Modal>
+
+                                            <hr/>
 
                                         </div>
                                     )
                                 })
                             }
+
+                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
+
+                                <h4>
+                                    Add new Card
+                                </h4>
+                                <input type="text" value={this.state.Card_name[list.id]} onChange={event => this.handleNameChangeCard(event, list.id)} />
+                                <br/>
+
+                                <label>Assigned To:</label>
+
+                                <Dropdown
+                                    placeholder='assign'
+                                    options={this.state.userlist}
+                                    multiple selection
+                                    onChange={(event,data) =>this.handleAssignedMemberChange(event , data, list.id)
+                                    }
+                                    
+                                />
+
+                                <h6>
+                                    Description
+                                </h6>
+                                <input type="text" value={this.state.create_card_description[list.id]} onChange={event => this.handleDescriptionChange(event, list.id)} />
+                                <br/>
+                                
+
+                                <Button type="submit" >Add new Card</Button>
+                            
+                            </Form>
 
                             </Modal>
 
@@ -203,7 +323,7 @@ class Project extends Component{
         const params= new URLSearchParams(location.search);
         const id= params.get("id");
 
-        const project= await axios.get('http://127.0.0.1:8000/api/project/'+id, {withCredentials:true}).then(console.log("done"));
+        const project= await axios.get('http://127.0.0.1:8000/api/projectData/'+id, {withCredentials:true}).then(console.log("done"));
 
         const data= project.data;
 
@@ -353,6 +473,8 @@ class Project extends Component{
     async handleSubmitCard(event, list_id){
         event.preventDefault();
 
+        console.log(this.state.assigned[list_id])
+
         let formData = { 
             Card_name: this.state.Card_name[list_id],
             List: list_id ,
@@ -373,6 +495,36 @@ class Project extends Component{
         })
 
         console.log(response);
+
+    }
+
+    async deleteCard(list_id, card_id){
+        const response= await axios({url:'http://127.0.0.1:8000/api/card/'+card_id+'/' ,
+        method:'DELETE', 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            console.log(err)
+        })
+
+        console.log(response);
+        
+    }
+
+    async deleteList(list_id){
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/list/'+list_id+'/' ,
+        method:'DELETE', 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            console.log(err)
+        })
+
+        console.log(response);
+
 
     }
 }
