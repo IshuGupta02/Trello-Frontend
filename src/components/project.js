@@ -187,7 +187,7 @@ class Project extends Component{
                                             open={this.state.open_Modal_Card[list.id][card.id]}
                                             onOpen={()=>this.openModalCard(list.id, card.id)}
                                             >
-{/* 
+
                                             {card.Card_name}
 
                                             <div>
@@ -214,7 +214,7 @@ class Project extends Component{
 
                                             {card.description}
 
-                                            <br/> */}
+                                            <br/> 
 
 
                                             </Modal>
