@@ -11,6 +11,7 @@ import Logout from './components/logout';
 import Failed from './components/failed'
 import CreateProject from './components/createProject'
 import Members from './components/members';
+import Project from './components/project';
 
 class App extends Component{
 
@@ -25,6 +26,7 @@ class App extends Component{
           <Route path="/fail" component={Failed}/>
           <Route path="/new" component={CreateProject}/>
           <Route path="/members" component={Members}/>
+          <Route path="/project" component={Project}/>
           {/* <Route path="/sample" component={Sample}/> */}
           <Route path="/" component={HomePage}/>
           

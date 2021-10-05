@@ -40,7 +40,7 @@ class SideBar extends Component{
                     this.state.projectlist_dict.map(function(proj){
                         return (
                             <button key={proj.id} onClick={() => 
-                             window.location.href='../project?'+proj.id}> {proj.name}</button>
+                             window.location.href='../project?id='+proj.id}> {proj.name}</button>
                         );
                     })
                     }   
