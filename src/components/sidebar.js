@@ -4,6 +4,10 @@ import { Redirect } from 'react-router-dom';
 // import { Component } from 'react/cjs/react.production.min';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+// import 'semantic-ui-css/semantic.min.css'
+import { Header, Icon, Image, Menu, Segment, Sidebar } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
+
 
 class SideBar extends Component{
     constructor(props)
@@ -11,7 +15,10 @@ class SideBar extends Component{
         super(props);
         this.state = { 
             projectlist_dict:[],
-            loggedIn1:false
+            loggedIn1:false,
+            visible:false,
+            visible1:true
+            
         };
     }
 
@@ -25,32 +32,114 @@ class SideBar extends Component{
 
     render(){
         return(
-            <div>
-                {/* {this.renderRedirect()} */}
-                <div>
-                    DashBoard
-                </div>
-                <div>
+            // <div >                
+            //     <div >
+            //         DashBoard
+            //     </div>
+            //     <div >
+            //         Members
+            //     </div>
+            //     <div >
+            //         projects
+
+            //         {
+            //         this.state.projectlist_dict.map(function(proj){
+            //             return (
+            //                 <button key={proj.id} onClick={() => 
+            //                  window.location.href='../project?id='+proj.id}> {proj.name}</button>
+            //             );
+            //         })
+            //         }  
+            //     </div>
+
+            //     <br/>
+
+            //     <button>
+            //         Create Project
+            //     </button>
+                
+            // </div>
+
+
+            <Sidebar.Pushable as={Segment} style={{height:'100vh', width: '10vw'}}>
+                <Sidebar
+                as={Menu}
+                animation='overlay'
+                icon='labeled'
+                visible= {this.state.visible1}
+                inverted
+                vertical
+                width='thin'
+                >
+
+                <Menu.Item onClick={()=>{this.setState({visible1: false})}}>
+                    <Icon name='arrow left' />
+                    
+                </Menu.Item>
+
+                <Menu.Item as={Link} to="../dashboard">
+                    <Icon name='user' />
+                    Dashboard
+                </Menu.Item>
+                <Menu.Item as={Link} to="../members">
+                    <Icon name='users' />
                     Members
-                </div>
-                <div>
-                    projects
+                </Menu.Item>
+                
+                <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}}>
+                    <Icon name='unordered list'/>
+                    Projects
+
+                </Menu.Item>
+
+                <Sidebar.Pushable as={Segment} style={{height:'50vh'}}>
+                        <Sidebar
+                        as={Menu}
+                        animation='scale down'
+                        icon='labeled'
+                        visible
+                        inverted
+                        vertical
+                        width='thin'
+                        >
+
 
                     {
-                    this.state.projectlist_dict.map(function(proj){
-                        return (
-                            <button key={proj.id} onClick={() => 
-                             window.location.href='../project?id='+proj.id}> {proj.name}</button>
-                        );
-                    })
-                    }   
-                </div>
+                     this.state.projectlist_dict.map(function(proj){
+                         return (
+                            <Menu.Item link key={proj.id} onClick={() => window.location.href='../project?id='+proj.id}>
+                                {proj.name}
+                            </Menu.Item>
+                         );
+                     })
+                    }  
 
-                <div>
-                    Create Project
-                </div>
-                
-            </div>
+                    </Sidebar>                       
+
+                </Sidebar.Pushable>
+
+                <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}}>
+
+                {/* style={{bottom: '0', position:'sticky'}} */}
+                    <Icon name='add' />
+                    Create new project
+                </Menu.Item>
+
+                </Sidebar>
+
+                <Sidebar.Pusher>
+                    <Segment>
+
+                        <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} >
+                            <Icon name='arrow right' />
+                        </Menu.Item>
+                        
+                    </Segment>
+                </Sidebar.Pusher>
+
+            </Sidebar.Pushable>
+
+            
             
         );
     }

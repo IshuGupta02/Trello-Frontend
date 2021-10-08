@@ -5,6 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import SideBar from './../components/sidebar'
+import { Button, Card, Image } from 'semantic-ui-react'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -15,40 +17,64 @@ class Members extends Component{
         super(props);
         this.state = {
             users:[],
-            done: false
+            done: false,
+            isAdmin:false
         };
         this.changeEnable = this.changeEnable.bind(this);
         this.changeAdmin = this.changeAdmin.bind(this);
     }
 
     render(){
-        return(
-            <div>
-                <div>
-                Members' details:
-                <br/>
-                </div>
 
+        const mystyle = {
+            display: "flex",
+            flexDirection: "row",
+        };
+
+        return(
+
+            
+            <div style={mystyle}>
+
+            <SideBar/>
+
+            <Card.Group>
                 {
-                    
                     this.state.users.map((user)=>{
                         return (
-                            
-                            <div key={user.id}>
-                                <div>Name: {user.User_name}</div>
-                                <br/>
+                            <Card key={user.id}>
+                                <Card.Content>
+                                    <Image
+                                    floated='right'
+                                    size='mini'
+                                    src='https://react.semantic-ui.com/images/avatar/large/matthew.png'
+                                    />
+                                    <Card.Header>{user.User_name}</Card.Header>
+                                    <Card.Meta>{user.enrollment_no}</Card.Meta>
+                                    <Card.Description>
+                                     Email id: <strong>{user.email}</strong>
+                                    </Card.Description>
+                                </Card.Content>
+                                <Card.Content extra>
+                                    <div className='ui two buttons'>
 
-                                {/* <button onClick={()=>{this.changeAdmin()}}> Sample </button> */}
+                                    {(user.enabled===true)?(<Button color='red' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)} disabled={!this.state.isAdmin}> Disable </Button>):(<Button color='green' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)}> Enable </Button>)}
 
-                                {(user.enabled===true)?(<button onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)}> Disable </button>):(<button onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)}> Enable </button>)}
-
-                                {(user.admin===true)?(<button onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Remove from admin </button>):(<button onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Make Admin </button>)}
-
-                            </div>                                                
+                                    {(user.admin===true)?(<Button color='red' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Remove from admin </Button>):(<Button color='green' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Make Admin </Button>)}
+                                    
+                                    </div>
+                                </Card.Content>
+                                </Card>                                   
                             
                         );
                     })
+
                 }
+
+                
+                
+            </Card.Group>
+                
             
             </div>
         );
@@ -58,15 +84,24 @@ class Members extends Component{
 
         const users_data= await axios.get('http://127.0.0.1:8000/api/user/', {withCredentials:true}).then(console.log("done"));
 
+        const my_data= await axios.get('http://127.0.0.1:8000/api/user/info/', {withCredentials:true}).then(console.log("done"));
+
+        console.log(my_data);
+        
+
         console.log(users_data.data);
 
-        await this.setState({
+        this.setState({
             users: users_data.data
         });
 
-        await this.setState({
+        this.setState({
             done:true
         });
+
+        this.setState({
+            isAdmin:my_data.data.admin
+        })
         
     }
 
@@ -147,3 +182,6 @@ export default Members;
 
 // (user.enabled===true)?(<button key={user.id} onClick={console.log(this.changeAdmin)}> Disable </button>):
 //                                     (<button> Enable </button>)
+
+
+
