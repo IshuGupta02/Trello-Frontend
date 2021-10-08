@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import SideBar from './../components/sidebar'
-import { Button, Card, Image } from 'semantic-ui-react'
+import { Button, Card, Image, Segment } from 'semantic-ui-react'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -31,6 +31,21 @@ class Members extends Component{
             flexDirection: "row",
         };
 
+        const style1={
+            // display: "flex",
+            // flexDirection: "column",
+            // flexWrap: "wrap"
+        };
+        const card={
+            height:'300px'
+
+        }
+
+        const buttons={
+            height:'40px'
+
+        }
+
         return(
 
             
@@ -38,11 +53,11 @@ class Members extends Component{
 
             <SideBar/>
 
-            <Card.Group>
+            <Card.Group sytle={style1}>
                 {
                     this.state.users.map((user)=>{
                         return (
-                            <Card key={user.id}>
+                            <Card key={user.id} style={card} color={(user.enabled)?('green'):('red')} raised={user.admin}>
                                 <Card.Content>
                                     <Image
                                     floated='right'
@@ -50,17 +65,37 @@ class Members extends Component{
                                     src='https://react.semantic-ui.com/images/avatar/large/matthew.png'
                                     />
                                     <Card.Header>{user.User_name}</Card.Header>
-                                    <Card.Meta>{user.enrollment_no}</Card.Meta>
+                                    <Card.Meta>{user.enrollment_no}: {user.email} </Card.Meta>
                                     <Card.Description>
-                                     Email id: <strong>{user.email}</strong>
+
+                                    <Segment>
+
+                                    {
+                                        user.member.map((project)=>{
+                                            return(
+                                                <Button size='mini' key={project.id} onClick={()=>{window.location.href='../project?id='+project.id}}>
+                                                {project.Project_name}
+                                                </Button>                                              
+                                                    
+                                                
+                                            );
+                                        })
+
+                                    }
+
+                                    </Segment>
+
+                                    
+                                   
+                                    
                                     </Card.Description>
                                 </Card.Content>
-                                <Card.Content extra>
-                                    <div className='ui two buttons'>
+                                <Card.Content extra >
+                                    <div className='ui two buttons' style={buttons}>
 
-                                    {(user.enabled===true)?(<Button color='red' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)} disabled={!this.state.isAdmin}> Disable </Button>):(<Button color='green' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)}> Enable </Button>)}
+                                    {(user.enabled===true)?(<Button color='red' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)} disabled={!this.state.isAdmin}> Disable </Button>):(<Button  disabled={!this.state.isAdmin} color='green' onClick={()=> this.changeEnable(user.id, user.enabled, user.admin)}> Enable </Button>)}
 
-                                    {(user.admin===true)?(<Button color='red' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Remove from admin </Button>):(<Button color='green' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Make Admin </Button>)}
+                                    {(user.admin===true)?(<Button color='red' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}  disabled={!this.state.isAdmin}> Remove from admin </Button>):(<Button  disabled={!this.state.isAdmin} color='green' onClick={()=> this.changeAdmin(user.id, user.enabled, user.admin)}> Make Admin </Button>)}
                                     
                                     </div>
                                 </Card.Content>
@@ -71,7 +106,7 @@ class Members extends Component{
 
                 }
 
-                
+                              
                 
             </Card.Group>
                 

@@ -61,7 +61,7 @@ class SideBar extends Component{
             // </div>
 
 
-            <Sidebar.Pushable as={Segment} style={{height:'100vh', width: '10vw'}}>
+            <Sidebar.Pushable as={Segment} style={{height:'100vh', width:'10vw'}}>
                 <Sidebar
                 as={Menu}
                 animation='overlay'
@@ -72,27 +72,31 @@ class SideBar extends Component{
                 width='thin'
                 >
 
-                <Menu.Item onClick={()=>{this.setState({visible1: false})}}>
+                {/* <Menu.Item onClick={()=>{this.setState({visible1: false})}} style={{width:'10vw'}}>
                     <Icon name='arrow left' />
-                    
+                </Menu.Item> */}
+
+                <Menu.Item onClick={()=>{window.location.href='../logout'}} style={{width:'10vw'}}>
+                    <Icon name='arrow circle left' />
+                    Logout
                 </Menu.Item>
 
-                <Menu.Item as={Link} to="../dashboard">
+                <Menu.Item as={Link} to="../dashboard" style={{width:'10vw'}}>
                     <Icon name='user' />
                     Dashboard
                 </Menu.Item>
-                <Menu.Item as={Link} to="../members">
+                <Menu.Item as={Link} to="../members" style={{width:'10vw'}}>
                     <Icon name='users' />
                     Members
                 </Menu.Item>
                 
-                <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}}>
+                <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'10vw'}}>
                     <Icon name='unordered list'/>
                     Projects
 
                 </Menu.Item>
 
-                <Sidebar.Pushable as={Segment} style={{height:'50vh'}}>
+                <Sidebar.Pushable as={Segment} style={{height:'50vh', width:'10vw'}} >
                         <Sidebar
                         as={Menu}
                         animation='scale down'
@@ -118,7 +122,7 @@ class SideBar extends Component{
 
                 </Sidebar.Pushable>
 
-                <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}}>
+                <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}} style={{width:'10vw'}} >
 
                 {/* style={{bottom: '0', position:'sticky'}} */}
                     <Icon name='add' />
@@ -130,7 +134,7 @@ class SideBar extends Component{
                 <Sidebar.Pusher>
                     <Segment>
 
-                        <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} >
+                        <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} style={{width:'10vw'}}>
                             <Icon name='arrow right' />
                         </Menu.Item>
                         
