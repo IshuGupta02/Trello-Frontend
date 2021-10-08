@@ -51,7 +51,7 @@ class Dashboard extends Component{
 
                                                     return(
                                                         
-                                                        <Avatar key={user.id} name={user.User_name} size="20" round={true} />
+                                                        <Avatar key={user.id} name={user.User_name} size="30" round={true} />
 
                                                     );
                                                     
@@ -106,7 +106,7 @@ class Dashboard extends Component{
 
                                                     return(
                                                         
-                                                        <Avatar key={user.id} name={user.User_name} size="20" round={true} />
+                                                        <Avatar key={user.id} name={user.User_name} size="30" round={true} />
 
                                                     );
                                                 })

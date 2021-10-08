@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 // import { Select } from 'semantic-ui-react';
 // import 'semantic-ui-css/semantic.min.css'
-import {Button, Dropdown, Form , Header, TextArea} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Header, TextArea, Input, Message} from 'semantic-ui-react';
 // import {CustomCalendar} from 'semantic-ui-calendar-react'
 import Select from 'react-select'
 import DatePicker from "react-datepicker";
@@ -18,6 +18,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 // import ReactQuill from 'react-quill';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Cookies from 'js-cookie';
+import SideBar from './../components/sidebar';
 
 //remember
 
@@ -40,6 +41,7 @@ class CreateProject extends React.Component{
             wiki: false,
             redirect: false,
             failed: false,
+            submitted:false,
             userlist : [],
             members_list:[],
             project_members:[],
@@ -51,6 +53,8 @@ class CreateProject extends React.Component{
         };
         
     }
+
+    
 
     // renderRedirect= () =>{
 
@@ -104,17 +108,39 @@ class CreateProject extends React.Component{
 
     render(){
 
+        const mystyle = {
+            display: "flex",
+            flexDirection: "row",
+        };
+
+        const formStyle={
+            boxSizing: "border-box",
+            width: "100%",
+            paddingTop:"5vw",
+            paddingRight: "10vw",
+            paddingLeft: "10vw",
+            // backgroundColor:"grey"
+        };
+
         return(
-            <div>
+            <div style={mystyle}>
 
-                <Form onSubmit={event => this.handleSubmit(event)}>
+                <SideBar/>
+
+                <Form onSubmit={event => this.handleSubmit(event)} style={formStyle}>
                     <h2>
-                        Add new Project
+                        Add a new Project
                     </h2>
-                    <input type="text" value={this.state.project_name} onChange={event => this.handleNameChange(event)} />
 
-                    <br/>
+                    <Form.Field >
+                    <label>Project Name</label>
+                    <Input type="text" value={this.state.project_name} onChange={event => this.handleNameChange(event)} placeholder="Project Name" required />
 
+                    </Form.Field>
+
+                    
+
+                    <Form.Field>
                     <label>Project Members</label>
 
                     <Dropdown
@@ -125,6 +151,9 @@ class CreateProject extends React.Component{
                         }
                         
                     />
+                    </Form.Field>
+
+                    <Form.Field>
 
                     <label>Project Admins</label>
 
@@ -135,10 +164,14 @@ class CreateProject extends React.Component{
                         onChange={(event,data) =>this.handleProjectAdminChange(event , data)
                         }
                         
+                        
                     />
+                    </Form.Field>
 
-                    <br/>
+                    
                     {/* <Form.Field label='Date' control={CustomCalendar} start='1' end='7' /> */}
+
+                    <Form.Field>
                     
                     <label>Due Date: </label>
                     {/* <div className="ui calendar" id="dueDate">
@@ -163,6 +196,11 @@ class CreateProject extends React.Component{
 
                     {/* <DatePicker locale="es" selected={new Date()}  /> */}
 
+                    </Form.Field>
+
+
+                    <Form.Field>
+
                     <label> Wiki: </label>
 
                     <CKEditor 
@@ -171,10 +209,31 @@ class CreateProject extends React.Component{
                         editor= {ClassicEditor}
                     />
 
-                    <Button type="submit" >Create Project</Button>
+                    </Form.Field>
 
-    
+                    <Button type="submit" color="black">Create Project</Button>
+
+                    {
+                        this.state.submitted?(<Message positive>
+                        <Message.Header>Project successfully created!</Message.Header>
+                        <p>
+                        Redirecting you to the project oage
+                        </p>
+                        </Message>): null
+                    }
+
+
+                    {
+                        this.state.failed?
+                        (<Message negative>
+                        <Message.Header>Project could not be created, Some Problem Occured</Message.Header>
+                        </Message>):null
+
+                    }                    
+
+                    
                 </Form>
+
                 
             </div>
         );
@@ -212,10 +271,22 @@ class CreateProject extends React.Component{
         data:formData , 
         withCredentials:true, 
         headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
-        .then(console.log("done"))
-        .catch(err => {
-            console.log(err)
+        .then(
+        this.setState({
+            failed:false,
+            submitted:true
+
         })
+        
+        )
+        .catch(err => {
+            this.setState({
+                failed:true,
+                submitted:false
+            })
+        })
+
+        // console.log(response.status)
 
         console.log(response);
 
@@ -233,6 +304,10 @@ class CreateProject extends React.Component{
         //   }).catch(err => {
         //     console.log(err)
         // })
+
+        if(this.state.submitted){
+            window.location.href='../project?id='+response.data.id;
+        }
 
     }
 
@@ -262,6 +337,7 @@ class CreateProject extends React.Component{
                 // console.log(this.state.userlist[j]["label"]);
                 if(this.state.userlist[j]["key"]===data.value[i]){
                     dict["label"] = this.state.userlist[j]["label"];
+                    dict["text"] = this.state.userlist[j]["text"];
                     break;
                 }
 
@@ -279,6 +355,8 @@ class CreateProject extends React.Component{
             members_list: memberList
         });
         // console.log(this.state.project_members);
+
+        
 
     }
 
