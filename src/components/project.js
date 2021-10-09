@@ -4,8 +4,11 @@ import { Redirect } from 'react-router-dom';
 // import { Component } from 'react/cjs/react.production.min';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import {Button, Dropdown, Form , Modal} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card} from 'semantic-ui-react';
 import Cookies from 'js-cookie';
+import SideBar from './../components/sidebar'
+import Settings from './../components/projectSettings'
+import Avatar from 'react-avatar'
 
 
 class Project extends Component{
@@ -27,42 +30,127 @@ class Project extends Component{
             Card_name:{},
             userlist:[],
             assigned:{},
-            create_card_description:{}
+            create_card_description:{},
+            setting_modal:false
         };
+
+        this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
+        // this.editProject=this.editProject.bind(this); 
     }
 
+    
+
     render(){
+        const mystyle = {
+            display: "flex",
+            flexDirection: "row",
+        };
+
+        
+
+        const header= {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent:"space-between",
+            // margin:'0'
+        }
+
+        const Removemargin={
+            margin:'0'
+        }
+
+        
+
         return(
-            <div>
 
-            <div>
-            Green:Admins
-            Blue:members
+            <div style={mystyle}>
 
+            <SideBar/>
+            
+            <div style={{width:'90vw'}}>
+
+            <Segment inverted fluid style={Removemargin}>
+
+            <Header as='h3' style={header}>
+                {this.state.project_name}
+                <Icon name='setting' size='large' link onClick={()=>{
+                    this.setState({
+                        setting_modal: true
+                    });
+                    // console.log(this.state.setting_modal)
+                }}/>
+            </Header>
+
+            <Settings 
+            open={this.state.setting_modal} 
+            method= {this.handleOpenClose_settings} 
+            name={this.state.project_name}
+            members={this.state.project_members}
+            admins={this.state.project_admins}
+            wiki={this.state.wiki}
+            project_id={this.state.id}
+            />
+
+            </Segment>
+
+            <Segment tertiary fluid style={Removemargin}>
+
+            <div dangerouslySetInnerHTML={this.createMarkup(this.state.wiki)} />
+
+            </Segment>
+
+
+            <div style={header}>
+
+            <div >
+            
             {
                 this.state.project_members.map((member)=>{
                     return(
-                        <div key={member.id}>
-                        {member.id}, {member.User_name}
-                        </div>
+
+                        <Avatar key={member.id} name={member.User_name} size="30" round={true} />
+                        
+                    )
+                })
+            }
+            </div>
+           
+           
+            <div >
+            Admins:
+            {
+                this.state.project_admins.map((member)=>{
+                    return(
+
+                        <Avatar key={member.id} name={member.User_name} size="30" round={true} />
+                        
                     )
                 })
 
             }
             </div>
+            </div>
 
             <div>
 
-            <Form onSubmit={event => this.handleSubmit1(event)}>
-                <h2>
-                    Add new List
-                </h2>
-                <input type="text" value={this.state.new_list} onChange={event => this.handleNameChange(event)} />
+            <Form onSubmit={event => this.handleSubmit1(event)} size='mini'>
+                
+                {/* <input type="text" value={this.state.new_list} onChange={event => this.handleNameChange(event)} /> */}
 
-                <br/>
+                <Form.Group inline>
 
-                <Button type="submit" >Add</Button>
+                <Form.Field
+                    required
+                    // label='List name'
+                    control='input'
+                    placeholder='List name'
+                    value={this.state.new_list} 
+                    onChange={event => this.handleNameChange(event)}
+                    inline
+                />
 
+                <Button type="submit" size='mini' >Add</Button>
+                </Form.Group>
     
             </Form>
 
@@ -72,13 +160,17 @@ class Project extends Component{
             {
                 this.state.lists.map((list)=>{
                     return(
-                        <div key={list.id}>
-                            <hr/>
-                            <button onClick={()=>this.openModal(list.id)}>List: {list.id}, {list.List_name}
-                            </button>
+                        <Card key={list.id} >
+                            <Card.Content>
 
-                            <button onClick={()=>this.deleteList(list.id)}>Delete
-                            </button>
+                            <Card.Header >
+                            <span onClick={()=>this.openModal(list.id)}>{list.List_name}</span>
+                            
+                            <Icon name='delete' color='red' onClick={()=>this.deleteList(list.id)} floated='right'/>
+
+                            </Card.Header>
+
+                            {/* <Card.Meta>Friends of Elliot</Card.Meta> */}
 
                             {
                                 list.cardsoflist.map((card)=>{
@@ -102,15 +194,27 @@ class Project extends Component{
                                     )
                                 })
                             }
-                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
 
-                                <h4>
-                                    Add new Card
-                                </h4>
-                                <input type="text" value={this.state.Card_name[list.id]} onChange={event => this.handleNameChangeCard(event, list.id)} />
-                                <br/>
+                            </Card.Content>
 
-                                <label>Assigned To:</label>
+                            <Card.Content extra>
+
+                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)} size='mini'>
+
+                            <Form.Group inline>
+
+                            {/* <Form.Field
+                                required
+                                // label='List name'
+                                control='input'
+                                placeholder='Name'
+                                value={this.state.Card_name[list.id]} 
+                                onChange={event => this.handleNameChangeCard(event, list.id)}
+                                inline
+                            /> */}
+
+                            <input type="text" placeholder='Name' value={this.state.Card_name[list.id]} onChange={event => this.handleNameChangeCard(event, list.id)} />
+                                
 
                                 <Dropdown
                                     placeholder='assign'
@@ -121,18 +225,22 @@ class Project extends Component{
                                     
                                 />
 
-                                <h6>
-                                    Description
-                                </h6>
-                                <input type="text" value={this.state.create_card_description[list.id]} onChange={event => this.handleDescriptionChange(event, list.id)} />
-                                <br/>
-                                
+                            </Form.Group>
 
-                                <Button type="submit" >Add new Card</Button>
+                            <Form.Group>
+
+                                <input type="text" placeholder='Description' value={this.state.create_card_description[list.id]} onChange={event => this.handleDescriptionChange(event, list.id)} />
+                                                                
+                                <Button type="submit" >Add</Button>
+
+                            </Form.Group>
                             
                             </Form>
 
 
+                            </Card.Content>
+                            
+                        
                             <Modal onClose={()=>this.closeModal(list.id)} 
                             open={this.state.open_Modal[list.id]}
                             onOpen={()=>this.openModal(list.id)}
@@ -260,11 +368,13 @@ class Project extends Component{
 
                             <hr/>
 
-                        </div>
+                        </Card>
                     )
                 })
             }
             
+            </div>
+
             </div>
 
             </div>
@@ -527,6 +637,16 @@ class Project extends Component{
 
 
     }
+
+    createMarkup(content){
+        return {__html: content};
+    }
+
+    handleOpenClose_settings (){
+        this.setState({ setting_modal: !this.state.setting_modal });
+    };
+
+    
 }
 
 

@@ -37,7 +37,7 @@ class Members extends Component{
             // flexWrap: "wrap"
         };
         const card={
-            height:'300px'
+            height:'400px'
 
         }
 
