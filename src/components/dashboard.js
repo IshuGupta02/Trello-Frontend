@@ -163,6 +163,7 @@ class Dashboard extends Component{
 
         const user1= await axios.get('http://127.0.0.1:8000/api/user/info/', {withCredentials:true}).then(console.log("done"));
         console.log(user1.data);
+        console.log(user1.data.profile);
 
         this.setState({
             data: user1.data

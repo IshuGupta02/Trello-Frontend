@@ -83,10 +83,7 @@ class Members extends Component{
 
                                     }
 
-                                    </Segment>
-
-                                    
-                                   
+                                    </Segment>                                   
                                     
                                     </Card.Description>
                                 </Card.Content>

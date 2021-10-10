@@ -96,7 +96,7 @@ class SideBar extends Component{
 
                 </Menu.Item>
 
-                <Sidebar.Pushable as={Segment} style={{height:'50vh', width:'10vw'}} >
+                <Sidebar.Pushable as={Segment} style={{ maxHeight: '50vh', width:'10vw'}} >
                         <Sidebar
                         as={Menu}
                         animation='scale down'

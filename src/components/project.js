@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 // import { Component } from 'react/cjs/react.production.min';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card, Input} from 'semantic-ui-react';
 import Cookies from 'js-cookie';
 import SideBar from './../components/sidebar'
 import Settings from './../components/projectSettings'
@@ -31,7 +31,10 @@ class Project extends Component{
             userlist:[],
             assigned:{},
             create_card_description:{},
-            setting_modal:false
+            setting_modal:false,
+            card_name:"",
+            card_desc:"",
+            card_assign:[]
         };
 
         this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
@@ -59,6 +62,12 @@ class Project extends Component{
             margin:'0'
         }
 
+        const projectDetails={
+            margin:'0',
+            marginBottom:'20px'
+
+        }
+
         
 
         return(
@@ -69,9 +78,24 @@ class Project extends Component{
             
             <div style={{width:'90vw'}}>
 
+
+
+
+
             <Segment inverted fluid style={Removemargin}>
 
             <Header as='h3' style={header}>
+
+            TRELLO
+                
+            </Header>
+
+            </Segment>
+
+
+            <Segment tertiary fluid style={projectDetails} >
+
+            <Header as='h1' style={header}>
                 {this.state.project_name}
                 <Icon name='setting' size='large' link onClick={()=>{
                     this.setState({
@@ -80,6 +104,12 @@ class Project extends Component{
                     // console.log(this.state.setting_modal)
                 }}/>
             </Header>
+
+            <Segment tertiary fluid style={projectDetails}>
+
+            WIKI: <div dangerouslySetInnerHTML={this.createMarkup(this.state.wiki)} />
+
+            </Segment>
 
             <Settings 
             open={this.state.setting_modal} 
@@ -91,19 +121,14 @@ class Project extends Component{
             project_id={this.state.id}
             />
 
-            </Segment>
-
-            <Segment tertiary fluid style={Removemargin}>
-
-            <div dangerouslySetInnerHTML={this.createMarkup(this.state.wiki)} />
-
-            </Segment>
 
 
             <div style={header}>
 
             <div >
-            
+
+            Members:
+
             {
                 this.state.project_members.map((member)=>{
                     return(
@@ -114,8 +139,8 @@ class Project extends Component{
                 })
             }
             </div>
-           
-           
+
+
             <div >
             Admins:
             {
@@ -131,6 +156,11 @@ class Project extends Component{
             </div>
             </div>
 
+
+
+            </Segment>
+
+            
             <div>
 
             <Form onSubmit={event => this.handleSubmit1(event)} size='mini'>
@@ -176,20 +206,22 @@ class Project extends Component{
                                 list.cardsoflist.map((card)=>{
                                     return(
                                         <div key={card.id}>
+                                            
                                             {card.Card_name}: 
                                             {
                                                 card.assigned.map((assign_member)=>{
                                                     return(
-                                                        <span>
-                                                        {assign_member.User_name}, 
-                                                        </span>
+                                                        
+                                                        <Avatar key={assign_member.id} name={assign_member.User_name} size="20"  />
 
                                                     )                                                    
                                                 })
 
                                             }
-                                            
+                                           <Icon name='delete' color='red' onClick={()=>this.deleteCard(list.id, card.id)} floated='right'/>
 
+                                           {/* <Icon name='angle double right' color='green' onClick={()=>this.openModalCard(list.id, card.id)}/> */}
+                                           
                                         </div>
                                     )
                                 })
@@ -219,8 +251,10 @@ class Project extends Component{
                                 <Dropdown
                                     placeholder='assign'
                                     options={this.state.userlist}
+                                    // defaultValue={this.state.card_assign}
                                     multiple selection
                                     onChange={(event,data) =>this.handleAssignedMemberChange(event , data, list.id)
+                                    
                                     }
                                     
                                 />
@@ -245,31 +279,46 @@ class Project extends Component{
                             open={this.state.open_Modal[list.id]}
                             onOpen={()=>this.openModal(list.id)}
                             >
-                            Hello {list.List_name}
 
-                            <button onClick={()=>this.deleteList(list.id)}>Delete
-                            </button>
+                            <Segment inverted fluid style={Removemargin}>
 
+                            <Header as='h2' style={header} >
+                                {list.List_name}
+
+                                <Button onClick={()=>this.deleteList(list.id)} negative>Delete
+                                </Button>
+                                
+                            </Header>
+                            </Segment>
+
+                            <Card.Group>
+                            
                             {
+                                
                                 list.cardsoflist.map((card)=>{
                                     return(
-                                        <div key={card.id}>
-                                        <hr/>
-                                            <button onClick={()=>this.openModalCard(list.id, card.id)}> {card.Card_name}
-                                            </button>
+                                        <Card key={card.id}>
+
+                                        <Card.Content>
+                                        <Card.Header>{card.Card_name}</Card.Header>
+                                        
+
+                                            {/* <Button onClick={()=>this.openModalCard(list.id, card.id)}> {card.Card_name}
+                                            </Button> */}
 
                                             <div>
 
-                                            Assigned to:-
+                                            
 
                                             {
                                                 card.assigned.map((assign_member)=>{
                                                     return(
-                                                        <div key={assign_member.id}>
-                                                        {assign_member.User_name},
-                                                        {assign_member.enrollment_no},
-                                                        {assign_member.email}, 
-                                                        </div>
+                                                        <Card.Meta key={assign_member.id}>
+                                                        
+                                                        {assign_member.User_name}
+                                                                                                            
+                                                        </Card.Meta>
+                                                        
 
                                                     )                                                    
                                                 })
@@ -278,17 +327,21 @@ class Project extends Component{
 
                                             </div>
                                     
-                                            Description:
-
+                                            <Card.Description>
                                             {card.description}
+                                            </Card.Description>        
 
-                                            <br/>
+                                            </Card.Content>
 
-                                            <button onClick={()=>this.deleteCard(list.id, card.id)}> Delete
-                                            </button>
+                                            <Card.Content extra >
+                                                <div className='ui two buttons' >
 
-                                            <button onClick={()=>this.openModalCard(list.id, card.id)}> Update
-                                            </button>
+                                                <Button color='red' onClick={()=>this.deleteCard(list.id, card.id)}> Delete </Button>
+
+                                                <Button color='green' onClick={()=>this.openModalCard(list.id, card.id)}> Update </Button>
+                                                
+                                                </div>
+                                            </Card.Content>
 
 
                                             <Modal onClose={()=>this.closeModalCard(list.id, card.id)} 
@@ -296,7 +349,7 @@ class Project extends Component{
                                             onOpen={()=>this.openModalCard(list.id, card.id)}
                                             >
 
-                                            {card.Card_name}
+                                            {/* {card.Card_name}
 
                                             <div>
 
@@ -320,19 +373,61 @@ class Project extends Component{
                                     
                                             Description:
 
-                                            {card.description}
+                                            {card.description} */}
 
-                                            <br/> 
+                                            
+
+                                            <Form >
+
+                                            <Form.Field inline>
+
+                                            <Input value={this.state.card_name} onChange={event => this.handleCardNameChange(event)} required/>
+
+                                            <Button onClick={()=>{this.editCardName(card.id)}}>Change Name</Button>
+                                            
+                                            </Form.Field>
+
+
+                                            <Form.Field inline>
+
+                                            <Input value={this.state.card_desc} onChange={event => this.handleCardDescChange(event)} required/>
+
+                                            <Button onClick={()=>{this.editCardDesc(card.id)}}>Change Description</Button>
+                                            
+                                            </Form.Field>
+
+                                            <Form.Field inline>
+                                            {/* <label>Assigned To</label> */}
+
+                                            <Dropdown
+                                                placeholder='AssignedTo'
+                                                options={this.state.userlist}
+                                                defaultValue={this.state.card_assign}
+                                                multiple selection
+                                                onChange={(event,data) =>this.handleCardAssignChange(event , data)
+                                                
+                                                }
+                                                
+                                            />
+
+                                            <Button onClick={()=>{this.editCardAssign(card.id)}}>Assign</Button>
+
+
+                                            </Form.Field>
+
+                                            </Form>
 
 
                                             </Modal>
 
                                             <hr/>
 
-                                        </div>
+                                        </Card>
                                     )
                                 })
                             }
+
+                            </Card.Group>
 
                             <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
 
@@ -468,24 +563,24 @@ class Project extends Component{
 
         })
 
-        await this.setState({
+        this.setState({
             create_card_description:arr4
         })
 
-        await this.setState({
+        this.setState({
             Card_name:arr3
         })
         
-        await this.setState({
+        this.setState({
             open_Modal_Card:arr2
         })
 
-        await this.setState({
+        this.setState({
             open_Modal:arr1
         })
                 
         console.log(this.state.open_Modal_Card);
-        await this.setState({lists:data.listsassociated });
+        this.setState({lists:data.listsassociated });
         console.log(this.state.open_Modal);
         console.log(this.state.lists);
 
@@ -504,7 +599,7 @@ class Project extends Component{
             user_list.push(dict);
         }
         
-        await this.setState({
+        this.setState({
             userlist:user_list
         })
     }
@@ -533,11 +628,44 @@ class Project extends Component{
         console.log(this.state.open_Modal);
     }
 
+    async setCardData(card_id){
+
+        const card= await axios.get('http://127.0.0.1:8000/api/cardData/'+card_id, {withCredentials:true}).then(console.log("done"));
+
+        console.log(card);
+
+        this.setState({card_name: card.data.Card_name});
+        this.setState({card_desc: card.data.description});
+
+        const users=card.data.assigned;
+
+        let user_list=[];
+        
+        for(let u in users){
+            // console.log(u);
+            // let dict = {};
+            // dict["key"] = users[u]["id"];
+            // dict["value"] = users[u]["id"];
+            // dict["label"] = users[u]["User_name"];
+            // dict["text"] = users[u]["User_name"];
+
+            user_list.push(users[u]["id"]);
+        }
+
+        
+        this.setState({
+            card_assign:user_list
+        })
+        
+
+    }
+
     async openModalCard(list_id, card_id){
+        await this.setCardData(card_id);
         let arr=this.state.open_Modal_Card;
         arr[list_id][card_id]= true;
 
-        await this.setState({
+        this.setState({
             open_Modal_Card: arr
 
         })
@@ -564,9 +692,11 @@ class Project extends Component{
         let arr=this.state.assigned;
         arr[list_id]= data.value;
 
-        await this.setState({
+        this.setState({
             assigned:arr
         })
+
+        console.log(this.state.assigned[list_id]);
 
     }
 
@@ -646,6 +776,98 @@ class Project extends Component{
         this.setState({ setting_modal: !this.state.setting_modal });
     };
 
+    async handleCardNameChange(event){
+        this.setState({
+            card_name: event.target.value
+        });
+
+
+    }
+
+    async handleCardDescChange(event){
+        this.setState({
+            card_desc: event.target.value
+        });
+
+    }
+
+    async handleCardAssignChange(event , data){
+        
+        this.setState({
+            card_assign: data.value
+        });
+       
+    }
+
+    async editCardAssign(card_id){
+        let formData = {
+            
+            "assigned": this.state.card_assign
+            
+        }
+
+        console.log(formData);
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/card/'+card_id+"/" ,
+        method:'PATCH', 
+        data:formData , 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            alert("You are not allowed to do this")
+        })
+
+        console.log(response);
+
+    }
+
+    async editCardName(card_id){
+
+        let formData = {
+            
+            "Card_name": this.state.card_name
+            
+        }
+
+        console.log(formData);
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/card/'+card_id+"/" ,
+        method:'PATCH', 
+        data:formData , 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            alert("You are not allowed to do this")
+        })
+
+        console.log(response);
+        
+    }
+
+    async editCardDesc(card_id){
+        let formData = {
+            
+            "description": this.state.card_desc
+            
+        }
+
+        console.log(formData);
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/card/'+card_id+"/" ,
+        method:'PATCH', 
+        data:formData , 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            alert("You are not allowed to do this")
+        })
+
+        console.log(response);
+
+    }
     
 }
 
