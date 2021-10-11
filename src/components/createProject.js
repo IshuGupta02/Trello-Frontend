@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 // import { Select } from 'semantic-ui-react';
 // import 'semantic-ui-css/semantic.min.css'
-import {Button, Dropdown, Form , Header, TextArea, Input, Message} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Header, TextArea, Input, Message, Segment} from 'semantic-ui-react';
 // import {CustomCalendar} from 'semantic-ui-calendar-react'
 import Select from 'react-select'
 import DatePicker from "react-datepicker";
@@ -122,10 +122,34 @@ class CreateProject extends React.Component{
             // backgroundColor:"grey"
         };
 
+        const header= {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent:"space-between",
+            // margin:'0'
+        }
+
+        const Removemargin={
+            margin:'0'
+        }
+
         return(
             <div style={mystyle}>
 
                 <SideBar/>
+
+                <div style={{width:'90vw'}}>
+
+                <Segment inverted fluid style={Removemargin}>
+
+                <Header as='h3' style={header}>
+
+                TRELLO
+                    
+                </Header>
+
+                </Segment>
+                
 
                 <Form onSubmit={event => this.handleSubmit(event)} style={formStyle}>
                     <h2>
@@ -234,6 +258,8 @@ class CreateProject extends React.Component{
                     
                 </Form>
 
+                </div>
+
                 
             </div>
         );
@@ -312,7 +338,7 @@ class CreateProject extends React.Component{
     }
 
     async handleNameChange(event){
-        await this.setState({
+        this.setState({
             project_name: event.target.value
         });
 
@@ -362,7 +388,7 @@ class CreateProject extends React.Component{
 
     async handleProjectAdminChange(event, data){
 
-        await this.setState({
+        this.setState({
             project_admins: data.value
         });
 

@@ -22,8 +22,6 @@ class Settings extends Component{
     //         project_id={this.state.id}
     // />
 
-
-
     constructor(props)
     {
         super(props);
@@ -43,102 +41,126 @@ class Settings extends Component{
 
     }
 
-    
+    async onOpen(){
+        console.log("called")
+        this.setState({
+            done:!this.state.done
+        })
+        this.props.method()
+
+    }
+
 
     render(){
+        console.log(this.state.project_name)
 
-        const onOpen=()=>{
-            console.log("called")
-            this.setState({
-                done:!this.state.done
-            })
-            this.props.method()
-    
-        }
-
-        return(
+        if(this.state.project_name!==undefined){
+            return(
             
-            <Modal onClose={()=>{
-                this.props.method()
-                               
-            }}
-            
-            open={this.props.open}
-            onOpen={()=>{
-                onOpen()
+                <Modal onClose={()=>{
+                    this.props.method()
+                            
+                }}
                 
-            }}
-            >
-            {/* {this.componentDidMount()} */}
-                <Form>
-                    <h2>
-                        Settings
-                    </h2>
-
-                    <Form.Field inline>
-                    <label>Project Name</label>
-                    <Input type="text" value={this.state.project_name} onChange={event => this.handleNameChange(event)} placeholder="Project Name" required />
-
-                    <Button color="black" onClick={()=>{this.editName()}}>Change Name</Button>
-
-                    </Form.Field>
-
-
-                    <Form.Field inline>
-                    <label>Project Members</label>
-
-                    <Dropdown
-                        placeholder='Members'
-                        options={this.state.userlist}
-                        value={this.state.member_values}
-                        multiple selection
-                        onChange={(event,data) =>this.handleProjectMemberChange(event , data)
-                        }
+                open={this.props.open}
+    
+                onOpen={()=>{
+                    this.props.method()
+                    // this.onOpen()
+                                   
+                }}
+                >
+                {/* {this.componentDidMount()} */}
+                    <Form>
+                        <h2>
+                            Settings
+                        </h2>
+    
+                        <Form.Field inline>
+                        <label>Project Name</label>
+                        <Input type="text" value={this.state.project_name} onChange={event => this.handleNameChange(event)} placeholder="Project Name" required />
+    
+                        <Button color="black" onClick={()=>{this.editName()}}>Change Name</Button>
+    
+                        </Form.Field>
+    
+    
+                        <Form.Field inline>
+                        <label>Project Members</label>
+    
+                        <Dropdown
+                            placeholder='Members'
+                            options={this.state.userlist}
+                            value={this.state.member_values}
+                            multiple selection
+                            onChange={(event,data) =>this.handleProjectMemberChange(event , data)
+                            }
+                            
+                        />
+                        <Button color="black" onClick={()=>{this.editMembers()}}>Make Changes</Button>
+                        </Form.Field>
+    
+    
+    
+                        <Form.Field inline>
+                        <label>Project Admins</label>
+    
+                        <Dropdown
+                            placeholder='Admins'
+                            options={this.state.project_members}
+                            value={this.state.admin_values}
+                            multiple selection
+                            onChange={(event,data) =>this.handleProjectAdminChange(event , data)
+                            
+                            }
+                            
+                        />
+                        <Button color="black" onClick={()=>{this.editAdmins()}}>Make Changes</Button>
+                        </Form.Field>
+    
                         
-                    />
-                    <Button color="black" onClick={()=>{this.editMembers()}}>Make Changes</Button>
-                    </Form.Field>
-
-
-
-                    <Form.Field inline>
-                    <label>Project Admins</label>
-
-                    <Dropdown
-                        placeholder='Admins'
-                        options={this.state.project_members}
-                        value={this.state.admin_values}
-                        multiple selection
-                        onChange={(event,data) =>this.handleProjectAdminChange(event , data)
                         
-                        }
-                        
-                    />
-                    <Button color="black" onClick={()=>{this.editAdmins()}}>Make Changes</Button>
-                    </Form.Field>
-
-                    
-                    
-                    <Form.Field inline>
-
-                    <label> Wiki: </label>
-
-                    <CKEditor 
-                        data={this.state.wiki}
-                        onChange={(event, editor) => this.handleWikiChange( event, editor)}
-                        editor= {ClassicEditor}
-                    />
-
-                    </Form.Field>
-
-                    <Button color="black" onClick={()=>{this.editWiki()}}>Change Wiki</Button>
-
-                    </Form>
-
-
-            </Modal>
-            
-        );
+                        <Form.Field inline>
+    
+                        <label> Wiki: </label>
+    
+                        <CKEditor 
+                            data={this.state.wiki}
+                            onChange={(event, editor) => this.handleWikiChange( event, editor)}
+                            editor= {ClassicEditor}
+                        />
+    
+                        </Form.Field>
+    
+                        <Button color="black" onClick={()=>{this.editWiki()}}>Change Wiki</Button>
+    
+                        </Form>
+    
+    
+                </Modal>
+                
+            );
+        }
+        else{
+            return(
+                <Modal onClose={()=>{
+                    this.props.method()
+                            
+                }}
+                
+                open={this.props.open}
+    
+                onOpen={()=>{
+                    // this.props.method()
+                    // this.onOpen()
+                    console.log("open!")
+                                   
+                }}
+                >
+                    <p>loading...</p>
+                </Modal>
+            );
+        }
     }
 
 
@@ -296,7 +318,7 @@ class Settings extends Component{
 
     async componentDidMount(){
         const id= this.props.project_id;
-        console.log(id)
+        console.log("id "+id)
 
         const project= await axios.get('http://127.0.0.1:8000/api/projectData/'+id, {withCredentials:true}).then(console.log("done"));
 
@@ -365,10 +387,6 @@ class Settings extends Component{
         console.log(adminList)
 
         console.log(this.state.admin_values)
-
-
-
-
 
         const response= await axios({url:'http://127.0.0.1:8000/api/user/' ,method:'GET', withCredentials:true} ).then(console.log("done"));
 

@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SideBar from './../components/sidebar'
-import { Button, Card, Image, Segment, Tab, Icon } from 'semantic-ui-react'
+import { Button, Card, Image, Segment, Tab, Icon, Header } from 'semantic-ui-react'
 import Avatar from 'react-avatar'
 import ReactHover from 'react-hover'
 
@@ -21,6 +21,17 @@ class Dashboard extends Component{
     }
 
     render(){
+
+        const header= {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent:"space-between",
+            // margin:'0'
+        }
+
+        const Removemargin={
+            margin:'0'
+        }
 
         const mystyle = {
             display: "flex",
@@ -43,8 +54,10 @@ class Dashboard extends Component{
                                         <Card.Content>
                                             
                                             <Card.Header>{project.Project_name}</Card.Header>
+                                            <br/>
                                             
                                             <Card.Meta>
+                                             
 
                                             {
                                                 project.members.map((user)=>{
@@ -62,7 +75,7 @@ class Dashboard extends Component{
                                            
                                              </Card.Meta>
                                             <Card.Description>
-                                            <div dangerouslySetInnerHTML={this.createMarkup(project.wiki)} />
+                                            WIKI: <div dangerouslySetInnerHTML={this.createMarkup(project.wiki)} />
 
                                             </Card.Description>
                                         </Card.Content>
@@ -98,6 +111,8 @@ class Dashboard extends Component{
                                         <Card.Content>
                                             
                                             <Card.Header>{card.Card_name}</Card.Header>
+
+                                            <br/>
                                             
                                             <Card.Meta>
 
@@ -112,19 +127,24 @@ class Dashboard extends Component{
                                                 })
                                             }
                                                 </Card.Meta>
+                                                <br/>
+
+                                                <Card.Meta onClick={()=>{window.location.href='../project?id='+card.List.Project.id}}>
+                                                
+                                                Project: {card.List.Project.Project_name}
+                                                {/* <Icon name='arrow alternate circle right' /> */}
+
+                                                </Card.Meta>
 
                                                 <Card.Meta>
                                                 List: {card.List.List_name}
                                                 </Card.Meta>
 
-                                                <Card.Meta onClick={()=>{window.location.href='../project?id='+card.List.Project.id}}>
                                                 
-                                                Project: {card.List.Project.Project_name}
-                                                <Icon name='arrow alternate circle right' />
-
-                                                </Card.Meta>
 
                                             <Card.Description>
+                                            
+                                            Description:
                                             {card.description}
 
                                             </Card.Description>
@@ -154,8 +174,27 @@ class Dashboard extends Component{
             <div style={mystyle}>
                 <SideBar/>
 
+                <div style={{width:'90vw'}}>
+
+                <Segment inverted fluid style={Removemargin}>
+
+                <Header as='h3' style={header}>
+
+                TRELLO
+                    
+                </Header>
+
+                </Segment>
+
                 <Tab menu={{ secondary: true, pointing: true }} panes={panes} style={{width:'90vw'}}/>
+
+                </div>
+
+            
+                
             </div>
+
+            
         );
     }
 

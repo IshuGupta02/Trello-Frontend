@@ -77,21 +77,21 @@ class SideBar extends Component{
                 </Menu.Item> */}
 
                 <Menu.Item onClick={()=>{window.location.href='../logout'}} style={{width:'10vw'}}>
-                    <Icon name='arrow circle left' />
+                    <Icon name='arrow circle left' size='mini' />
                     Logout
                 </Menu.Item>
 
                 <Menu.Item as={Link} to="../dashboard" style={{width:'10vw'}}>
-                    <Icon name='user' />
+                    <Icon name='user' size='mini'/>
                     Dashboard
                 </Menu.Item>
                 <Menu.Item as={Link} to="../members" style={{width:'10vw'}}>
-                    <Icon name='users' />
+                    <Icon name='users' size='mini' />
                     Members
                 </Menu.Item>
                 
                 <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'10vw'}}>
-                    <Icon name='unordered list'/>
+                    <Icon name='unordered list' size='mini'/>
                     Projects
 
                 </Menu.Item>
@@ -125,7 +125,7 @@ class SideBar extends Component{
                 <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}} style={{width:'10vw'}} >
 
                 {/* style={{bottom: '0', position:'sticky'}} */}
-                    <Icon name='add' />
+                    <Icon name='add' size='mini'/>
                     Create new project
                 </Menu.Item>
 
@@ -135,7 +135,7 @@ class SideBar extends Component{
                     <Segment>
 
                         <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} style={{width:'10vw'}}>
-                            <Icon name='arrow right' />
+                            <Icon name='arrow right' size='mini' />
                         </Menu.Item>
                         
                     </Segment>

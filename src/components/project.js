@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 // import { Component } from 'react/cjs/react.production.min';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card, Input} from 'semantic-ui-react';
+import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card, Input, Label, Confirm} from 'semantic-ui-react';
 import Cookies from 'js-cookie';
 import SideBar from './../components/sidebar'
 import Settings from './../components/projectSettings'
@@ -34,7 +34,8 @@ class Project extends Component{
             setting_modal:false,
             card_name:"",
             card_desc:"",
-            card_assign:[]
+            card_assign:[],
+            open_confirm:false
         };
 
         this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
@@ -48,6 +49,14 @@ class Project extends Component{
             display: "flex",
             flexDirection: "row",
         };
+
+        // const giveMarginInput={
+        //     margin:'20px',
+            
+        // }
+
+        let list_id_delete="";
+        let card_id_delete="";
 
         
 
@@ -68,6 +77,10 @@ class Project extends Component{
 
         }
 
+        // eslint-disable-next-line no-restricted-globals
+        const params= new URLSearchParams(location.search);
+        const id= params.get("id");
+
         
 
         return(
@@ -77,8 +90,6 @@ class Project extends Component{
             <SideBar/>
             
             <div style={{width:'90vw'}}>
-
-
 
 
 
@@ -118,22 +129,34 @@ class Project extends Component{
             members={this.state.project_members}
             admins={this.state.project_admins}
             wiki={this.state.wiki}
-            project_id={this.state.id}
+            project_id={id}
             />
-
-
 
             <div style={header}>
 
             <div >
 
-            Members:
+            {/* Members: */}
+
+            {/* <Avatar key={member.id} name={member.User_name} size="30" round={true} /> */}
 
             {
                 this.state.project_members.map((member)=>{
                     return(
 
-                        <Avatar key={member.id} name={member.User_name} size="30" round={true} />
+                        <Label as='a' image>
+                        
+                        
+                        {
+                            
+                            (member.profile!=null)?(<img src={`http://channeli.in/${member.profile.substring(21)}`}/>):(<img src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />)
+                            
+                        }
+                            
+                            {member.User_name}
+                        </Label>
+
+                        
                         
                     )
                 })
@@ -147,7 +170,17 @@ class Project extends Component{
                 this.state.project_admins.map((member)=>{
                     return(
 
-                        <Avatar key={member.id} name={member.User_name} size="30" round={true} />
+                        <Label as='a' image>
+                        
+                        
+                        {
+                            
+                            (member.profile!=null)?(<img src={`http://channeli.in/${member.profile.substring(21)}`}/>):(<img src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />)
+                            
+                        }
+                            
+                            {member.User_name}
+                        </Label>
                         
                     )
                 })
@@ -161,12 +194,12 @@ class Project extends Component{
             </Segment>
 
             
-            <div>
+            <div style={{width:'100%'}}>
 
-            <Form onSubmit={event => this.handleSubmit1(event)} size='mini'>
+            <Form onSubmit={event => this.handleSubmit1(event)} size='mini' >
                 
                 {/* <input type="text" value={this.state.new_list} onChange={event => this.handleNameChange(event)} /> */}
-
+                Add List
                 <Form.Group inline>
 
                 <Form.Field
@@ -183,6 +216,7 @@ class Project extends Component{
                 </Form.Group>
     
             </Form>
+            <br/>
 
             </div>
 
@@ -196,7 +230,9 @@ class Project extends Component{
                             <Card.Header >
                             <span onClick={()=>this.openModal(list.id)}>{list.List_name}</span>
                             
-                            <Icon name='delete' color='red' onClick={()=>this.deleteList(list.id)} floated='right'/>
+                            <Icon name='delete' color='red' onClick={()=>
+                            this.deleteList(list.id)
+                            } floated='right'/>
 
                             </Card.Header>
 
@@ -235,15 +271,6 @@ class Project extends Component{
 
                             <Form.Group inline>
 
-                            {/* <Form.Field
-                                required
-                                // label='List name'
-                                control='input'
-                                placeholder='Name'
-                                value={this.state.Card_name[list.id]} 
-                                onChange={event => this.handleNameChangeCard(event, list.id)}
-                                inline
-                            /> */}
 
                             <input type="text" placeholder='Name' value={this.state.Card_name[list.id]} onChange={event => this.handleNameChangeCard(event, list.id)} />
                                 
@@ -326,8 +353,10 @@ class Project extends Component{
                                             }
 
                                             </div>
+                                            <br/>
                                     
                                             <Card.Description>
+                                            Desc: 
                                             {card.description}
                                             </Card.Description>        
 
@@ -336,9 +365,9 @@ class Project extends Component{
                                             <Card.Content extra >
                                                 <div className='ui two buttons' >
 
-                                                <Button color='red' onClick={()=>this.deleteCard(list.id, card.id)}> Delete </Button>
+                                                <Button color='red' onClick={()=>this.deleteCard(list.id, card.id)} basic> Delete </Button>
 
-                                                <Button color='green' onClick={()=>this.openModalCard(list.id, card.id)}> Update </Button>
+                                                <Button color='green' onClick={()=>this.openModalCard(list.id, card.id)} basic> Update </Button>
                                                 
                                                 </div>
                                             </Card.Content>
@@ -397,7 +426,7 @@ class Project extends Component{
                                             </Form.Field>
 
                                             <Form.Field inline>
-                                            {/* <label>Assigned To</label> */}
+                                            
 
                                             <Dropdown
                                                 placeholder='AssignedTo'
@@ -429,7 +458,7 @@ class Project extends Component{
 
                             </Card.Group>
 
-                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
+                            {/* <Form onSubmit={event => this.handleSubmitCard(event, list.id)}>
 
                                 <h4>
                                     Add new Card
@@ -457,7 +486,42 @@ class Project extends Component{
 
                                 <Button type="submit" >Add new Card</Button>
                             
+                            </Form> */}
+
+                            <Segment style={{paddingTop:'0px', paddingBottom:'0px'}}>
+
+                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)} size='mini'>
+
+                            <Form.Group inline>
+
+
+                                <input type="text" placeholder='Name' value={this.state.Card_name[list.id]} onChange={event => this.handleNameChangeCard(event, list.id)}
+                                style={{width:'30%', marginRight:'2px'}} />
+                                
+
+                                <Dropdown
+                                    
+                                    placeholder='assign'
+                                    options={this.state.userlist}
+                                    // defaultValue={this.state.card_assign}
+                                    multiple selection
+                                    onChange={(event,data) =>this.handleAssignedMemberChange(event , data, list.id)                                    
+                                    }
+                                    style={{width:'30%', marginRight:'2px'}}
+                                    
+                                />
+
+                                <input type="text" placeholder='Description' value={this.state.create_card_description[list.id]} onChange={event => this.handleDescriptionChange(event, list.id)} 
+                                style={{width:'40%', marginRight:'2px'}}
+                                />
+                                                                
+                                <Button type="submit" size='tiny'>Add</Button>
+
+                            </Form.Group>
+                            
                             </Form>
+
+                            </Segment>
 
                             </Modal>
 
@@ -470,6 +534,14 @@ class Project extends Component{
             
             </div>
 
+            <Confirm
+                open={this.state.open_confirm}
+                // onCancel={this.close}
+                // onConfirm={this.close}
+            />
+
+
+
             </div>
 
             </div>
@@ -478,6 +550,12 @@ class Project extends Component{
 
     async handleSubmit1(event){
         event.preventDefault();
+
+        // confirm("are you sure")
+
+        // this.setState({
+        //     open_confirm:true
+        // })
         
         let formData = { 
             List_name: this.state.new_list,
@@ -752,7 +830,14 @@ class Project extends Component{
         
     }
 
+    async DeleteList(list_id){
+        
+
+    }
+
     async deleteList(list_id){
+
+        
 
         const response= await axios({url:'http://127.0.0.1:8000/api/list/'+list_id+'/' ,
         method:'DELETE', 

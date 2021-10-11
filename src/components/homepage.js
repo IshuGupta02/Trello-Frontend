@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { render } from '@testing-library/react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
+import {Button} from 'semantic-ui-react'
 
 class HomePage extends Component{
 
@@ -22,9 +23,17 @@ class HomePage extends Component{
 
     render(){
         return(
-            <div>
+            <div style={{height:'100vh', width:'100%', display:'flex', justifyContent:'center', 
+            backgroundColor:'#D7E5EE'}
+            }>
                 {this.renderRedirect()}
-                <a href="https://internet.channeli.in/oauth/authorise/?client_id=z1T5401eydvctrKve1qOJpYBGdTrWSaMZWhAe98j&redirect_uri=http://127.0.0.1:3000/login&state=done">Login with Omniport</a>
+                {/* <a href="https://internet.channeli.in/oauth/authorise/?client_id=z1T5401eydvctrKve1qOJpYBGdTrWSaMZWhAe98j&redirect_uri=http://127.0.0.1:3000/login&state=done">Login with Omniport</a> */}
+
+                <Button style={{height:'50px', width:'500px', alignSelf:'center'}} content='Login with Omniport' icon='right arrow' labelPosition='right' primary 
+                    onClick={()=>{
+                        window.location.href="https://internet.channeli.in/oauth/authorise/?client_id=z1T5401eydvctrKve1qOJpYBGdTrWSaMZWhAe98j&redirect_uri=http://127.0.0.1:3000/login&state=done"
+                    }}
+                />
 
             </div>
 

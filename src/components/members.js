@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import SideBar from './../components/sidebar'
-import { Button, Card, Image, Segment } from 'semantic-ui-react'
+import { Button, Card, Image, Segment, Header } from 'semantic-ui-react'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
@@ -26,6 +26,18 @@ class Members extends Component{
 
     render(){
 
+        const header= {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent:"space-between",
+            // margin:'0'
+        }
+
+        const Removemargin={
+            margin:'0'
+        }
+
+
         const mystyle = {
             display: "flex",
             flexDirection: "row",
@@ -37,13 +49,28 @@ class Members extends Component{
             // flexWrap: "wrap"
         };
         const card={
-            height:'400px'
+            // height:'400px'
 
         }
 
         const buttons={
-            height:'40px'
+            height:'45px'
 
+        }
+
+        const projectList={
+            display: 'flex',
+            flexDirection:'row',
+            flexWrap:'wrap',
+            justifyContent:'space-between',
+            // alignContent:'stretch'
+            // flexBasis:'20px'
+        }
+
+        const projectStyle={
+            width:'45%',
+            margin:'1px',
+            overflow:'hidden'
         }
 
         return(
@@ -53,30 +80,65 @@ class Members extends Component{
 
             <SideBar/>
 
+            <div style={{width:'90vw'}}>
+
+                <Segment inverted fluid style={Removemargin}>
+
+                <Header as='h3' style={header}>
+
+                TRELLO
+                    
+                </Header>
+
+                </Segment>
+
+                <br/>
+            
+
             <Card.Group sytle={style1}>
                 {
                     this.state.users.map((user)=>{
                         return (
                             <Card key={user.id} style={card} color={(user.enabled)?('green'):('red')} raised={user.admin}>
                                 <Card.Content>
-                                    <Image
+
+
+
+                                {
+                            
+                                    (user.profile!=null)?(<Image 
+                                    floated='right'
+                                    size='tiny' 
+                                    src={`http://channeli.in/${user.profile.substring(21)}`}/>):
+                                    (<Image 
+                                    floated='right'
+                                    size='tiny'
+                                    src='https://react.semantic-ui.com/images/avatar/small/joe.jpg' />)
+                            
+                                }
+
+                                    {/* <Image
                                     floated='right'
                                     size='mini'
                                     src='https://react.semantic-ui.com/images/avatar/large/matthew.png'
-                                    />
+                                    /> */}
                                     <Card.Header>{user.User_name}</Card.Header>
-                                    <Card.Meta>{user.enrollment_no}: {user.email} </Card.Meta>
-                                    <Card.Description>
+                                    <Card.Meta>{user.enrollment_no}</Card.Meta>
+                                    <Card.Meta>{user.email} </Card.Meta>
 
-                                    <Segment>
+                                    <Card.Description>
+                                    Projects:
+                                    <Segment style={projectList}>
+
+                                   
 
                                     {
+                                        
                                         user.member.map((project)=>{
                                             return(
-                                                <Button size='mini' key={project.id} onClick={()=>{window.location.href='../project?id='+project.id}}>
+                                                <Button style={ projectStyle} size='mini' key={project.id} onClick={()=>{window.location.href='../project?id='+project.id}}>
                                                 {project.Project_name}
                                                 </Button>                                              
-                                                    
                                                 
                                             );
                                         })
@@ -106,6 +168,8 @@ class Members extends Component{
                               
                 
             </Card.Group>
+
+            </div>
                 
             
             </div>
