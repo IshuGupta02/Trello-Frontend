@@ -35,7 +35,11 @@ class Project extends Component{
             card_name:"",
             card_desc:"",
             card_assign:[],
-            open_confirm:false
+            open_confirm:false,
+            deletelist:false,
+            deletelist:false,
+            list_id_delete:"",
+            card_id_delete:"",
         };
 
         this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
@@ -230,9 +234,30 @@ class Project extends Component{
                             <Card.Header >
                             <span onClick={()=>this.openModal(list.id)}>{list.List_name}</span>
                             
-                            <Icon name='delete' color='red' onClick={()=>
-                            this.deleteList(list.id)
+                            <span>
+                            
+
+                            <Icon name='delete' color='red' onClick={()=>{
+                                this.setState({
+                                    list_id_delete:list.id
+                                })
+                                // console.log(list_id_delete)
+                                this.setState({
+                                    deletelist:true
+                                });
+
+                            }
+                            
                             } floated='right'/>
+
+                            <Confirm
+                                open={this.state.deletelist}
+                                onCancel={this.notDeleteList}
+                                onConfirm={()=>{this.deleteList(this.state.list_id_delete)}}
+                            />
+
+                            </span>
+                            
 
                             </Card.Header>
 
@@ -534,13 +559,11 @@ class Project extends Component{
             
             </div>
 
-            <Confirm
-                open={this.state.open_confirm}
-                // onCancel={this.close}
-                // onConfirm={this.close}
-            />
-
-
+            {/* <Confirm
+                open={this.state.deletelist}
+                onCancel={this.notDeleteList}
+                onConfirm={this.deleteList(list_id_delete)}
+            /> */}
 
             </div>
 
@@ -830,14 +853,41 @@ class Project extends Component{
         
     }
 
-    async DeleteList(list_id){
-        
+    notDeleteList= ()=>{
+        this.setState({
+            deletelist:false
+        })
 
     }
+        
+    // close = () => this.setState({ open: false })
+
+    // async DeleteList(list_id){
+    //     this.setState({
+    //         deletelist:false
+    //     })
+
+    //     const response= await axios({url:'http://127.0.0.1:8000/api/list/'+list_id+'/' ,
+    //     method:'DELETE', 
+    //     withCredentials:true, 
+    //     headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+    //     .then(console.log("done"))
+    //     .catch(err => {
+    //         console.log(err)
+    //     })
+
+    //     console.log(response);
+
+
+    // }
 
     async deleteList(list_id){
 
-        
+        console.log("deleting")
+
+        this.setState({
+            deletelist:false
+        })
 
         const response= await axios({url:'http://127.0.0.1:8000/api/list/'+list_id+'/' ,
         method:'DELETE', 
