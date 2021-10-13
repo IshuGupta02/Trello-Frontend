@@ -231,13 +231,7 @@ class Project extends Component{
                         <Card key={list.id} >
                             <Card.Content>
 
-                            <Card.Header >
-                            <span onClick={()=>this.openModal(list.id)}>{list.List_name}</span>
-                            
-                            <span>
-                            
-
-                            <Icon name='delete' color='red' onClick={()=>{
+                            {/* <Icon name='delete' color='red' onClick={()=>{
                                 this.setState({
                                     list_id_delete:list.id
                                 })
@@ -248,7 +242,30 @@ class Project extends Component{
 
                             }
                             
-                            } floated='right'/>
+                            } floated='right'/> */}
+
+                            <Card.Header style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+                            
+                            {list.List_name}
+
+                            <span>
+                            <Button color='red' size='mini' basic onClick={()=>{
+                                this.setState({
+                                    list_id_delete:list.id
+                                })
+                                
+                                this.setState({
+                                    deletelist:true
+                                });
+
+                            }
+                            }> Delete </Button>
+
+                            <Button color='blue' size='mini' onClick={()=>this.openModal(list.id)}  basic> Open </Button>
+
+                            </span>
+                           
+                            </Card.Header>
 
                             <Confirm
                                 open={this.state.deletelist}
@@ -261,12 +278,6 @@ class Project extends Component{
                                 onConfirm={()=>{this.deleteCard(this.state.card_id_delete_list, this.state.card_id_delete)}}
                             />
 
-                            </span>
-                            
-
-                            </Card.Header>
-
-                            {/* <Card.Meta>Friends of Elliot</Card.Meta> */}
 
                             {
                                 list.cardsoflist.map((card)=>{
