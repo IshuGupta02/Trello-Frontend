@@ -37,9 +37,10 @@ class Project extends Component{
             card_assign:[],
             open_confirm:false,
             deletelist:false,
-            deletelist:false,
+            deletecard:false,
             list_id_delete:"",
             card_id_delete:"",
+            card_id_delete_list:"",
         };
 
         this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
@@ -61,8 +62,6 @@ class Project extends Component{
 
         let list_id_delete="";
         let card_id_delete="";
-
-        
 
         const header= {
             display: "flex",
@@ -138,7 +137,7 @@ class Project extends Component{
 
             <div style={header}>
 
-            <div >
+            <div>
 
             {/* Members: */}
 
@@ -158,9 +157,7 @@ class Project extends Component{
                         }
                             
                             {member.User_name}
-                        </Label>
-
-                        
+                        </Label>                        
                         
                     )
                 })
@@ -212,7 +209,10 @@ class Project extends Component{
                     control='input'
                     placeholder='List name'
                     value={this.state.new_list} 
-                    onChange={event => this.handleNameChange(event)}
+                    // onChange={event => this.handleNameChange(event)}
+                    onChange={(event)=>{this.setState({
+                        new_list: event.target.value
+                    });}}
                     inline
                 />
 
@@ -224,7 +224,7 @@ class Project extends Component{
 
             </div>
 
-            <div>
+            <Card.Group>
             {
                 this.state.lists.map((list)=>{
                     return(
@@ -255,6 +255,11 @@ class Project extends Component{
                                 onCancel={this.notDeleteList}
                                 onConfirm={()=>{this.deleteList(this.state.list_id_delete)}}
                             />
+                            <Confirm
+                                open={this.state.deletecard}
+                                onCancel={this.notDeleteCard}
+                                onConfirm={()=>{this.deleteCard(this.state.card_id_delete_list, this.state.card_id_delete)}}
+                            />
 
                             </span>
                             
@@ -279,8 +284,22 @@ class Project extends Component{
                                                 })
 
                                             }
-                                           <Icon name='delete' color='red' onClick={()=>this.deleteCard(list.id, card.id)} floated='right'/>
+                                           <Icon name='delete' color='red' onClick={()=>{
+                                                this.setState({
+                                                    card_id_delete_list:list.id
+                                                })
+                                                this.setState({
+                                                    card_id_delete:card.id
+                                                })                                                
+                                                this.setState({
+                                                    deletecard:true
+                                                });
 
+                                            }
+                                            
+                                            } floated='right'/>
+
+                                           
                                            {/* <Icon name='angle double right' color='green' onClick={()=>this.openModalCard(list.id, card.id)}/> */}
                                            
                                         </div>
@@ -337,7 +356,19 @@ class Project extends Component{
                             <Header as='h2' style={header} >
                                 {list.List_name}
 
-                                <Button onClick={()=>this.deleteList(list.id)} negative>Delete
+                                <Button onClick={()=>{
+                                this.setState({
+                                    list_id_delete:list.id
+                                })
+                                // console.log(list_id_delete)
+                                this.setState({
+                                    deletelist:true
+                                });
+
+                            }
+                            
+                            }
+                            negative>Delete
                                 </Button>
                                 
                             </Header>
@@ -390,7 +421,20 @@ class Project extends Component{
                                             <Card.Content extra >
                                                 <div className='ui two buttons' >
 
-                                                <Button color='red' onClick={()=>this.deleteCard(list.id, card.id)} basic> Delete </Button>
+                                                <Button color='red' onClick={()=>{
+                                                this.setState({
+                                                    card_id_delete_list:list.id
+                                                })
+                                                this.setState({
+                                                    card_id_delete:card.id
+                                                })                                                
+                                                this.setState({
+                                                    deletecard:true
+                                                });
+
+                                            }
+                                            
+                                            } basic> Delete </Button>
 
                                                 <Button color='green' onClick={()=>this.openModalCard(list.id, card.id)} basic> Update </Button>
                                                 
@@ -557,7 +601,7 @@ class Project extends Component{
                 })
             }
             
-            </div>
+            </Card.Group>
 
             {/* <Confirm
                 open={this.state.deletelist}
@@ -597,7 +641,7 @@ class Project extends Component{
             alert("You are not a member of this project, not allowed to create a list here")
         })
 
-        await this.setState({
+        this.setState({
             new_list: ""
         });
         
@@ -607,7 +651,7 @@ class Project extends Component{
     }
 
     async handleNameChange(event){
-        await this.setState({
+        this.setState({
             new_list: event.target.value
         });
 
@@ -618,7 +662,7 @@ class Project extends Component{
         let arr= this.state.Card_name;
         arr[list_id]=event.target.value;
 
-        await this.setState({
+        this.setState({
             Card_name: arr
         });
         
@@ -635,13 +679,13 @@ class Project extends Component{
 
         console.log(data)
 
-        await this.setState({id:data.id });
-        await this.setState({project_name:data.Project_name });
-        await this.setState({wiki:data.wiki});
-        await this.setState({project_members:data.members });
-        await this.setState({project_admins:data.admins });
-        await this.setState({date_created:data.date_created });
-        await this.setState({due_date:data.due_date });
+        this.setState({id:data.id });
+        this.setState({project_name:data.Project_name });
+        this.setState({wiki:data.wiki});
+        this.setState({project_members:data.members });
+        this.setState({project_admins:data.admins });
+        this.setState({date_created:data.date_created });
+        this.setState({due_date:data.due_date });
     
         console.log(this.state.project_members);
 
@@ -664,6 +708,11 @@ class Project extends Component{
 
         })
 
+        if(Object.keys(this.state.open_Modal).length!==0){
+            this.setState({lists:data.listsassociated});
+
+        }
+
         this.setState({
             create_card_description:arr4
         })
@@ -679,9 +728,11 @@ class Project extends Component{
         this.setState({
             open_Modal:arr1
         })
+
+        this.setState({lists:data.listsassociated});
                 
         console.log(this.state.open_Modal_Card);
-        this.setState({lists:data.listsassociated });
+        
         console.log(this.state.open_Modal);
         console.log(this.state.lists);
 
@@ -709,7 +760,7 @@ class Project extends Component{
         let arr=this.state.open_Modal;
         arr[id]= true;
 
-        await this.setState({
+        this.setState({
             open_Modal: arr
 
         })
@@ -721,7 +772,7 @@ class Project extends Component{
         let arr=this.state.open_Modal;
         arr[id]= false;
 
-        await this.setState({
+        this.setState({
             open_Modal: arr
 
         })
@@ -779,12 +830,20 @@ class Project extends Component{
         let arr=this.state.open_Modal_Card;
         arr[list_id][card_id]= false;
 
-        await this.setState({
+        this.setState({
             open_Modal_Card: arr
 
         })
 
         console.log(this.state.open_Modal_Card);
+
+        await this.componentDidMount();
+            let arr1=this.state.open_Modal;
+            arr1[list_id]=true
+            this.setState({
+                open_Modal:arr1
+
+            })
 
     }
 
@@ -806,17 +865,18 @@ class Project extends Component{
         let arr= this.state.create_card_description;
         arr[list_id]=event.target.value;
 
-        await this.setState({
+        this.setState({
             create_card_description:arr
         })
     }
+
 
     async handleSubmitCard(event, list_id){
         event.preventDefault();
 
         console.log(this.state.assigned[list_id])
 
-        let formData = { 
+        let formData = {
             Card_name: this.state.Card_name[list_id],
             List: list_id ,
             assigned:this.state.assigned[list_id],
@@ -832,10 +892,26 @@ class Project extends Component{
         headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
         .then(console.log("done"))
         .catch(err => {
-            console.log(err)
+            alert("you cannot create a card here, you are not a member of this project")
         })
 
         console.log(response);
+
+        console.log(this.state.open_Modal[list_id])
+
+        if(this.state.open_Modal[list_id]===true){
+            console.log("hello")
+            await this.componentDidMount();
+            let arr1=this.state.open_Modal;
+            arr1[list_id]=true
+            this.setState({
+                open_Modal:arr1
+
+            })
+        }
+        else{
+            await this.componentDidMount();
+        }
 
     }
 
@@ -846,16 +922,42 @@ class Project extends Component{
         headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
         .then(console.log("done"))
         .catch(err => {
-            console.log(err)
+            alert("you cannot delete a card here, you are not a member of this project")
         })
 
         console.log(response);
+
+        if(this.state.open_Modal[list_id]===true){
+            console.log("hello")
+            await this.componentDidMount();
+            let arr1=this.state.open_Modal;
+            arr1[list_id]=true
+            this.setState({
+                open_Modal:arr1
+
+            })
+        }
+        
+        else{
+            await this.componentDidMount();
+        }
+
+        this.setState({
+            deletecard:false
+        })
         
     }
 
     notDeleteList= ()=>{
         this.setState({
             deletelist:false
+        })
+
+    }
+
+    notDeleteCard=()=>{
+        this.setState({
+            deletecard:false
         })
 
     }
@@ -885,21 +987,22 @@ class Project extends Component{
 
         console.log("deleting")
 
-        this.setState({
-            deletelist:false
-        })
-
         const response= await axios({url:'http://127.0.0.1:8000/api/list/'+list_id+'/' ,
         method:'DELETE', 
         withCredentials:true, 
         headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
         .then(console.log("done"))
         .catch(err => {
-            console.log(err)
+            alert("you are not a member of this project, you cannot delete a list here")
         })
 
         console.log(response);
 
+        await this.componentDidMount();
+
+        this.setState({
+            deletelist:false
+        })
 
     }
 
@@ -909,6 +1012,9 @@ class Project extends Component{
 
     handleOpenClose_settings (){
         this.setState({ setting_modal: !this.state.setting_modal });
+        if(!this.state.setting_modal){
+            this.componentDidMount();
+        }
     };
 
     async handleCardNameChange(event){
@@ -1005,6 +1111,4 @@ class Project extends Component{
     }
     
 }
-
-
 export default Project;

@@ -129,10 +129,10 @@ class Dashboard extends Component{
                                                 </Card.Meta>
                                                 <br/>
 
-                                                <Card.Meta onClick={()=>{window.location.href='../project?id='+card.List.Project.id}}>
+                                                <Card.Meta >
                                                 
                                                 Project: {card.List.Project.Project_name}
-                                                {/* <Icon name='arrow alternate circle right' /> */}
+                                                <Icon name='arrow alternate circle right' onClick={()=>{window.location.href='../project?id='+card.List.Project.id}}/>
 
                                                 </Card.Meta>
 

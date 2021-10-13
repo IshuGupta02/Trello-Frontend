@@ -68,9 +68,11 @@ class Members extends Component{
         }
 
         const projectStyle={
-            width:'45%',
-            margin:'1px',
-            overflow:'hidden'
+            width:'95%',
+            margin:'1%',            
+            overflow: 'scroll',
+            
+            
         }
 
         return(
@@ -102,8 +104,6 @@ class Members extends Component{
                             <Card key={user.id} style={card} color={(user.enabled)?('green'):('red')} raised={user.admin}>
                                 <Card.Content>
 
-
-
                                 {
                             
                                     (user.profile!=null)?(<Image 
@@ -124,19 +124,17 @@ class Members extends Component{
                                     /> */}
                                     <Card.Header>{user.User_name}</Card.Header>
                                     <Card.Meta>{user.enrollment_no}</Card.Meta>
-                                    <Card.Meta>{user.email} </Card.Meta>
+                                    <Card.Meta style={{overflow:'scroll'}}>{user.email} </Card.Meta>
 
                                     <Card.Description>
                                     Projects:
                                     <Segment style={projectList}>
 
-                                   
-
                                     {
                                         
                                         user.member.map((project)=>{
                                             return(
-                                                <Button style={ projectStyle} size='mini' key={project.id} onClick={()=>{window.location.href='../project?id='+project.id}}>
+                                                <Button style={ projectStyle} size='small' key={project.id} onClick={()=>{window.location.href='../project?id='+project.id}}>
                                                 {project.Project_name}
                                                 </Button>                                              
                                                 
@@ -226,11 +224,11 @@ class Members extends Component{
 
         console.log(users_data.data);
 
-        await this.setState({
+        this.setState({
             users: users_data.data
         });
 
-        await this.setState({
+        this.setState({
             done:true
         });
 

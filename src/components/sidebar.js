@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 // import 'semantic-ui-css/semantic.min.css'
-import { Header, Icon, Image, Menu, Segment, Sidebar } from 'semantic-ui-react'
+import { Header, Icon, Image, Menu, Segment, Sidebar , Accordion} from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
 
@@ -17,7 +17,8 @@ class SideBar extends Component{
             projectlist_dict:[],
             loggedIn1:false,
             visible:false,
-            visible1:true
+            visible1:true,
+            activeIndex:-1
             
         };
     }
@@ -32,36 +33,10 @@ class SideBar extends Component{
 
     render(){
         return(
-            // <div >                
-            //     <div >
-            //         DashBoard
-            //     </div>
-            //     <div >
-            //         Members
-            //     </div>
-            //     <div >
-            //         projects
+          
+            <div style={{minHeight:'100vh', width:'10vw'}}>
 
-            //         {
-            //         this.state.projectlist_dict.map(function(proj){
-            //             return (
-            //                 <button key={proj.id} onClick={() => 
-            //                  window.location.href='../project?id='+proj.id}> {proj.name}</button>
-            //             );
-            //         })
-            //         }  
-            //     </div>
-
-            //     <br/>
-
-            //     <button>
-            //         Create Project
-            //     </button>
-                
-            // </div>
-
-
-            <Sidebar.Pushable as={Segment} style={{height:'100vh', width:'10vw'}}>
+            <Sidebar.Pushable as={Segment} style={{minHeight:'100vh', width:'100%'}}>
                 <Sidebar
                 as={Menu}
                 animation='overlay'
@@ -69,34 +44,70 @@ class SideBar extends Component{
                 visible= {this.state.visible1}
                 inverted
                 vertical
-                width='thin'
+                style={{width:'100%'}}
                 >
 
                 {/* <Menu.Item onClick={()=>{this.setState({visible1: false})}} style={{width:'10vw'}}>
                     <Icon name='arrow left' />
                 </Menu.Item> */}
 
-                <Menu.Item onClick={()=>{window.location.href='../logout'}} style={{width:'10vw'}}>
+                <Menu.Item onClick={()=>{window.location.href='../logout'}} style={{width:'100%'}}>
                     <Icon name='arrow circle left' size='mini' />
                     Logout
                 </Menu.Item>
 
-                <Menu.Item as={Link} to="../dashboard" style={{width:'10vw'}}>
+                <Menu.Item as={Link} to="../dashboard" style={{width:'100%'}}>
                     <Icon name='user' size='mini'/>
                     Dashboard
                 </Menu.Item>
-                <Menu.Item as={Link} to="../members" style={{width:'10vw'}}>
+                <Menu.Item as={Link} to="../members" style={{width:'100%'}}>
                     <Icon name='users' size='mini' />
                     Members
                 </Menu.Item>
                 
-                <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'10vw'}}>
+                {/* <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'10vw'}}>
+                    <Icon name='unordered list' size='mini'/>
+                    Projects
+
+                </Menu.Item> */}
+
+                {/* <Menu.Item onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'10vw'}}> */}
+                <Accordion inverted>
+
+                <Accordion.Title
+                active={this.state.activeIndex === 0}
+                index={0}
+                onClick={this.handleClick}
+                >
+                {/* <Icon name='unordered list' size='big'/>
+                <br/>
+                Projects */}
+
+                <Menu.Item as='a' onClick={()=>{this.setState({visible: !this.state.visible})}} style={{width:'100%'}}>
                     <Icon name='unordered list' size='mini'/>
                     Projects
 
                 </Menu.Item>
+                
+                </Accordion.Title>
+                <Accordion.Content active={this.state.activeIndex === 0}>
+                {
+                     this.state.projectlist_dict.map(function(proj){
+                         return (
+                            <Menu.Item link key={proj.id} onClick={() => window.location.href='../project?id='+proj.id}>
+                                {proj.name}
+                            </Menu.Item>
+                         );
+                     })
+                }
+                </Accordion.Content>
 
-                <Sidebar.Pushable as={Segment} style={{ maxHeight: '50vh', width:'10vw'}} >
+                </Accordion>
+
+                {/* </Menu.Item> */}
+
+
+                {/* <Sidebar.Pushable as={Segment} style={{ maxHeight: '50vh', width:'10vw'}} >
                         <Sidebar
                         as={Menu}
                         animation='scale down'
@@ -120,13 +131,13 @@ class SideBar extends Component{
 
                     </Sidebar>                       
 
-                </Sidebar.Pushable>
+                </Sidebar.Pushable> */}
 
-                <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}} style={{width:'10vw'}} >
+                <Menu.Item as={Link} to="/new" style={{position:'fixed', bottom:'0px'}} style={{width:'100%'}} >
 
                 {/* style={{bottom: '0', position:'sticky'}} */}
                     <Icon name='add' size='mini'/>
-                    Create new project
+                    New project
                 </Menu.Item>
 
                 </Sidebar>
@@ -134,7 +145,7 @@ class SideBar extends Component{
                 <Sidebar.Pusher>
                     <Segment>
 
-                        <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} style={{width:'10vw'}}>
+                        <Menu.Item color="black" onClick={()=>{this.setState({visible1: !this.state.visible1})}} style={{width:'100%'}}>
                             <Icon name='arrow right' size='mini' />
                         </Menu.Item>
                         
@@ -143,10 +154,18 @@ class SideBar extends Component{
 
             </Sidebar.Pushable>
 
-            
+            </div>
             
         );
     }
+
+    handleClick = (e, titleProps) => {
+        const { index } = titleProps
+        const { activeIndex } = this.state
+        const newIndex = activeIndex === index ? -1 : index
+    
+        this.setState({ activeIndex: newIndex })
+      }
 
     async componentDidMount(){
 

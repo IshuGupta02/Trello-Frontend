@@ -53,7 +53,7 @@ class Login extends Component{
             const user1= await axios({url:'http://127.0.0.1:8000/api/login/OAuth/' ,method:'GET', params: {code:auth} , withCredentials:true} ).then(console.log("done"));
 
             console.log(user1)
-            await this.setState({done:"True"});
+            this.setState({done:"True"});
 
 
     }

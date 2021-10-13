@@ -163,63 +163,91 @@ class Settings extends Component{
         }
     }
 
-
+    editMembersCheck(){
+        for(let i in this.state.admin_values){
+            console.log(this.state.admin_values[i]);
+            console.log(this.state.member_values.indexOf(this.state.admin_values[i]))
+            if(this.state.member_values.indexOf(this.state.admin_values[i]) === -1)  
+            {
+                console.log("false")
+                return false;
+            }
+            
+        }
+        return true;
+    }
 
     async editMembers(){
 
-        let formData = {
+        let i= this.editMembersCheck();
+        console.log(i)
+        if(i===true){
+            let formData = {
             
-            "members": this.state.member_values
-            
-        }
-
-        // console.log(formData);
-
-        const response= await axios({url:'http://127.0.0.1:8000/api/project/'+this.props.project_id+"/" ,
-        method:'PATCH', 
-        data:formData , 
-        withCredentials:true, 
-        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
-        .then(console.log("done"))
-        .catch(err => {
-            alert("You are not allowed to do this")
-        })
-
-        console.log(response);
-
-
-
-
-        let memberList=[];
-
-        const data=response.data.members
-
-        for(let i in data){
-           
-            let dict = {};
-            dict["key"] = data[i];
-            dict["value"] = data[i];
-            // dict["label"] = this.state.userlist[3];
-            for(let j in this.state.userlist){
-                // console.log(this.state.userlist[j]["label"]);
-                if(this.state.userlist[j]["key"]===data[i]){
-                    dict["label"] = this.state.userlist[j]["label"];
-                    dict["text"] = this.state.userlist[j]["text"];
-                    break;
-                }
-
+                "members": this.state.member_values
+                
             }
-
-            memberList.push(dict);
-            // console.log(memberList);
+    
+            // console.log(formData);
+    
+            let error= false;
+    
+            const response= await axios({url:'http://127.0.0.1:8000/api/project/'+this.props.project_id+"/" ,
+            method:'PATCH', 
+            data:formData , 
+            withCredentials:true, 
+            headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+            .then(console.log("done"))
+            .catch(err => {
+                error=true;
+                alert("You are not allowed to do this")
+            })
+    
+            console.log(response);
+    
+            if(response){
+                let memberList=[];
+    
+                const data=response.data.members
+    
+                for(let i in data){
+                
+                    let dict = {};
+                    dict["key"] = data[i];
+                    dict["value"] = data[i];
+                    // dict["label"] = this.state.userlist[3];
+                    for(let j in this.state.userlist){
+                        // console.log(this.state.userlist[j]["label"]);
+                        if(this.state.userlist[j]["key"]===data[i]){
+                            dict["label"] = this.state.userlist[j]["label"];
+                            dict["text"] = this.state.userlist[j]["text"];
+                            break;
+                        }
+    
+                    }
+    
+                    memberList.push(dict);
+                    // console.log(memberList);
+                }
+    
+                this.setState({
+                    project_members: memberList
+                });
+    
+            }
         }
+        else{
+            console.log("qqq")
+            alert("to remove an admin from member, remove him/her from members first")
+        }
+        
 
+        
 
-        this.setState({
-            project_members: memberList
-        });
 
         console.log(this.state.project_members)
+        console.log(this.state.admin_values)
+
 
 
     }
@@ -275,17 +303,35 @@ class Settings extends Component{
 
     }
 
+    async editWiki(){
+
+        let formData = {
+            "wiki": this.state.wiki
+        }
+
+        console.log(formData);
+
+        const response= await axios({url:'http://127.0.0.1:8000/api/project/'+this.props.project_id+"/" ,
+        method:'PATCH', 
+        data:formData , 
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            alert("You are not allowed to do this")
+        })
+
+        console.log(response);
+
+    }
+
     async handleProjectMemberChange(event , data){
 
-        
-
+    
         this.setState({
             member_values: data.value
         });
         
-        
-
-
 
     }
     async handleProjectAdminChange(event , data){
@@ -343,7 +389,7 @@ class Settings extends Component{
         let memberList=[];
         let memberList1=[];
         
-        const users1=data.members;
+        let users1=data.members;
         
         for(let u in users1){
             let dict = {};
@@ -365,28 +411,32 @@ class Settings extends Component{
 
 
         let adminList=[];
+        let adminList1=[];
         
-        const users2=data.admins;
-
-        // console.log(users2)
+        users1=data.admins;
         
+        for(let u in users1){
+            let dict = {};
+            dict["key"] = users1[u]["id"];
+            dict["value"] = users1[u]["id"];
+            dict["label"] = users1[u]["User_name"];
+            dict["text"] = users1[u]["User_name"];
+            adminList1.push(dict);
 
-        // //check this
-        // for(let u in users2){
-        //     console.log("hello")
-        //     console.log(users2[u]["id"])
-        //     adminList.push(users2[u]["id"]);
-        //     // console.log(adminList)
-        // }
-
+            adminList.push(users1[u]["id"]);
+        }
+        
         this.setState({
-            admin_values:users2
+            admin_values:adminList
+        })
+        this.setState({
+            project_admins:adminList1
         })
 
+        console.log(this.state.admin_values);
+        console.log(this.state.project_members);
 
-        console.log(adminList)
 
-        console.log(this.state.admin_values)
 
         const response= await axios({url:'http://127.0.0.1:8000/api/user/' ,method:'GET', withCredentials:true} ).then(console.log("done"));
 
