@@ -278,18 +278,20 @@ class Project extends Component{
                                 onConfirm={()=>{this.deleteCard(this.state.card_id_delete_list, this.state.card_id_delete)}}
                             />
 
-
+                            <Card.Description>
+                            
                             {
                                 list.cardsoflist.map((card)=>{
                                     return(
-                                        <div key={card.id}>
-                                            
-                                            {card.Card_name}: 
+                                        <div key={card.id} style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+                                            <span style={{height:'1.75em', width:'40%', fontSize:'1.25rem'}}>
+                                            {card.Card_name}
+                                            </span>
                                             {
                                                 card.assigned.map((assign_member)=>{
                                                     return(
                                                         
-                                                        <Avatar key={assign_member.id} name={assign_member.User_name} size="20"  />
+                                                        <Avatar key={assign_member.id} name={assign_member.User_name} size="30" round />
 
                                                     )                                                    
                                                 })
@@ -317,6 +319,8 @@ class Project extends Component{
                                     )
                                 })
                             }
+
+                            </Card.Description>
 
                             </Card.Content>
 
