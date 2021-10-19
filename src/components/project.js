@@ -10,6 +10,8 @@ import SideBar from './../components/sidebar'
 import Settings from './../components/projectSettings'
 import Avatar from 'react-avatar'
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 class Project extends Component{
     constructor(props)
@@ -326,7 +328,7 @@ class Project extends Component{
 
                             <Card.Content extra>
 
-                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)} size='mini'>
+                            <Form onSubmit={event => this.handleSubmitCard(event, list.id, list.List_name)} size='mini'>
 
                             <Form.Group inline>
 
@@ -574,7 +576,7 @@ class Project extends Component{
 
                             <Segment style={{paddingTop:'0px', paddingBottom:'0px'}}>
 
-                            <Form onSubmit={event => this.handleSubmitCard(event, list.id)} size='mini'>
+                            <Form onSubmit={event => this.handleSubmitCard(event, list.id, list.List_name)} size='mini'>
 
                             <Form.Group inline>
 
@@ -886,7 +888,7 @@ class Project extends Component{
     }
 
 
-    async handleSubmitCard(event, list_id){
+    async handleSubmitCard(event, list_id, list_name){
         event.preventDefault();
 
         console.log(this.state.assigned[list_id])
@@ -911,6 +913,46 @@ class Project extends Component{
         })
 
         console.log(response);
+
+
+
+        
+
+        let emails=[];
+       
+        const users=this.state.project_members;
+        
+        for(let v in this.state.assigned[list_id]){
+
+            for(let u in users){
+
+                if(this.state.assigned[list_id][v]===users[u]["id"]){
+                    emails.push(users[u]["email"]);
+                }
+            }
+
+        } 
+
+        let formData1 = {
+            Card: this.state.Card_name[list_id],
+            list: list_name,
+            project:this.state.project_name,
+            email:emails
+        }
+
+        console.log(formData1)
+
+        const response1= await axios({url:'http://127.0.0.1:8000/api/success/' ,
+        method:'POST', 
+        data:formData1 ,
+        withCredentials:true, 
+        headers: {"Content-Type": "application/json", 'X-CSRFToken': Cookies.get("csrftoken") }})
+        .then(console.log("done"))
+        .catch(err => {
+            
+        })
+
+
 
         console.log(this.state.open_Modal[list_id])
 
