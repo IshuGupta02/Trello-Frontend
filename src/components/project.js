@@ -8,6 +8,7 @@ import {Button, Dropdown, Form , Modal, Header, Segment, Icon, Card, Input, Labe
 import Cookies from 'js-cookie';
 import SideBar from './../components/sidebar'
 import Settings from './../components/projectSettings'
+import Comments  from './comments';
 import Avatar from 'react-avatar'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -29,6 +30,7 @@ class Project extends Component{
             new_list:"",
             open_Modal:{},
             open_Modal_Card:{},
+            open_Modal_Card_Comments:{},
             Card_name:{},
             userlist:[],
             assigned:{},
@@ -44,8 +46,10 @@ class Project extends Component{
             card_id_delete:"",
             card_id_delete_list:"",
         };
-
+        
         this.handleOpenClose_settings=this.handleOpenClose_settings.bind(this);
+        this.handleOpenClose_card_comments=this.handleOpenClose_card_comments.bind(this);
+        
         // this.editProject=this.editProject.bind(this); 
     }
 
@@ -400,11 +404,37 @@ class Project extends Component{
                                         <Card key={card.id}>
 
                                         <Card.Content>
-                                        <Card.Header>{card.Card_name}</Card.Header>
+                                        <Card.Header style={{display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+                                        <span> {card.Card_name} </span>
+                                        {/* <Icon name='chat' onClick={()=>{}}/>
+                                        comments */}
+
+                                        <Button onClick={()=>{
+                                            let arr= this.state.open_Modal_Card_Comments;
+                                            arr[list.id][card.id]= true;
+                                            this.setState({
+                                                open_Modal_Card_Comments: arr
+                                            })
+
+                                        }}> comments
+                                        </Button>
+                                        
+                                        </Card.Header>
+
+                                        <Comments
+
+                                        list= {list.id}
+                                        card={card.id}                                        
+                                        open={this.state.open_Modal_Card_Comments[list.id][card.id]} 
+                                        method= {this.handleOpenClose_card_comments} 
+                                            
+                                        />
                                         
 
                                             {/* <Button onClick={()=>this.openModalCard(list.id, card.id)}> {card.Card_name}
                                             </Button> */}
+
+                                            
 
                                             <div>
 
@@ -708,6 +738,7 @@ class Project extends Component{
 
         let arr1= {};
         let arr2= {};
+        let arr2_1= {};
         let arr3= {};
         let arr4= {};
 
@@ -716,12 +747,15 @@ class Project extends Component{
             arr3[list.id]="";
             arr4[list.id]="";
             let arr_card={};
+            let arr_card_comments={};
 
             list.cardsoflist.map((card)=>{
                 arr_card[card.id]=  false;
+                arr_card_comments[card.id]=false;
             })
 
             arr2[list.id]=arr_card;
+            arr2_1[list.id]=arr_card_comments;
 
         })
 
@@ -729,6 +763,10 @@ class Project extends Component{
             this.setState({lists:data.listsassociated});
 
         }
+
+        this.setState({
+            open_Modal_Card_Comments:arr2_1
+        })
 
         this.setState({
             create_card_description:arr4
@@ -745,6 +783,8 @@ class Project extends Component{
         this.setState({
             open_Modal:arr1
         })
+
+        
 
         this.setState({lists:data.listsassociated});
                 
@@ -1068,17 +1108,29 @@ class Project extends Component{
     }
 
     handleOpenClose_settings (){
+        // console.log(this.state.setting_modal)
         this.setState({ setting_modal: !this.state.setting_modal });
         if(!this.state.setting_modal){
             this.componentDidMount();
         }
     };
 
+    handleOpenClose_card_comments (list_id, card_id){       
+
+        let arr= this.state.open_Modal_Card_Comments;
+        console.log(arr);
+
+        console.log(this.state.open_Modal_Card_Comments)
+
+        arr[list_id][card_id]= !this.state.open_Modal_Card_Comments[list_id][card_id];
+        this.setState({ open_Modal_Card_Comments: arr });
+        
+    };
+
     async handleCardNameChange(event){
         this.setState({
             card_name: event.target.value
         });
-
 
     }
 
