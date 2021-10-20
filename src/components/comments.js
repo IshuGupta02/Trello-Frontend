@@ -24,7 +24,8 @@ class Comments extends Component{
             messages:[],
             name:"",
             websock:null,
-            data:[]
+            data:[],
+            comment:""
            
         };
 
@@ -57,7 +58,8 @@ class Comments extends Component{
             let thistime = JSON.parse(e.data);
             console.log(thistime);
             var already_data = this.state.data;
-            already_data.push(thistime);
+            thistime.message.User.profile= "http://127.0.0.1:8000"+thistime.message.User.profile
+            already_data.push(thistime.message);
             this.setState({data:already_data});
             console.log(this.state.data);
         }
@@ -111,7 +113,27 @@ class Comments extends Component{
                         })
 
                     }
+
+                    <Form onSubmit={event => this.handleSubmit1(event)} size='mini' >
                 
+                        <Form.Group inline>
+
+                        <Form.Field
+                            required
+                            // label='List name'
+                            control='input'
+                            value={this.state.comment} 
+                            onChange={(event)=>{this.setState({
+                                comment: event.target.value
+                            });}}
+                            inline
+                        />
+
+                        <Icon name="send" onClick={()=>{this.submitMessage()}}/>
+
+                        </Form.Group>
+            
+                    </Form>               
 
                     
                 </Feed>
@@ -123,6 +145,19 @@ class Comments extends Component{
             </Modal>
         );
         
+        }
+
+        async submitMessage(){
+            const message = this.state.comment;
+            this.state.websock.send(JSON.stringify({
+                'message': message,
+                'card':this.state.card
+                
+            }));
+
+            this.setState({
+                comment:""
+            })
         }
 
         async componentDidMount(){
