@@ -9,45 +9,52 @@ class Login extends Component{
     constructor(props)
     {
         super(props);
-        this.state = { data :[],
+        this.state = { 
+        done :"False",
         isAdmin : "False",
         isEnabled:"True",
-        error:false};
+        loggedIn:"False",
+        error:false,
+        failed:"False"
+        };
+    }
+
+    renderRedirect= () =>{
+        if(this.state.done==="True" || this.state.loggedIn==="True" )
+        {
+            return <Redirect to={{pathname:'../dashboard'}}/>
+        }
+        else if(this.state.failed==="True"){
+            return <Redirect to={{pathname:'../'}}/>
+        }
     }
 
     render(){
         return(
+
             <div>
+            {this.renderRedirect()}
             Hello Login
             </div>
-            // window.location.href = "http://localhost:8000/api/login/login"
-            
         );
     }
 
     async componentDidMount(){
-        // eslint-disable-next-line no-restricted-globals
-        const params= new URLSearchParams(location.search);
-        const auth= params.get("code");
-        console.log(auth);
+       
+            // eslint-disable-next-line no-restricted-globals
+            const params= new URLSearchParams(location.search);
+            const auth= params.get("code");
+            console.log(auth);
 
-        // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
+            // const user = await axios({url:'http://127.0.0.1:8000/api/login/OAuth' ,method:'GET', params: {code:auth} , withCredentials:true, }).then(console.log("done"));
 
-        const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}}, {headers:{"Access-Control-Allow-Origin": "*", mode: "cors"}},{withCredentials:true} ).then(console.log("done"));
+            // const user1= await axios.get('http://127.0.0.1:8000/api/login/OAuth/', {params: {code:auth}},{withCredentials:true}).then(console.log("done"));
 
-        // const getData = () => {
-        //     Axios.get("http://localhost:3000/security?select=symbol,company",
-        //     {headers: {Authorization: 'Bearer 73Ntx3b6SwNXC7ANV3tw4wFfDdKntB26',
-        //                 "Access-Control-Allow-Origin": "*",
-        //                 mode: "cors",               
-        //     }}
-        //     ).then((response) => {
-        //         console.log(response)
-        //     })
-        // }
-        console.log(user1)
+            const user1= await axios({url:'http://127.0.0.1:8000/api/login/OAuth/' ,method:'GET', params: {code:auth} , withCredentials:true} ).then(console.log("done"));
 
-        // console.log(user1["isAdmin"]);
+            console.log(user1)
+            this.setState({done:"True"});
+
 
     }
         
